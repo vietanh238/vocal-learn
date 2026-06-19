@@ -1,0 +1,42 @@
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p>Chào mừng quay trở lại! Dưới đây là tiến trình học tập của bạn.</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📚</div>
+    <div class="stat-info">
+      <h3>Tổng số từ vựng</h3>
+      <p class="stat-value">{{ srsStats?.total || 0 }}</p>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-info">
+      <h3>Chuỗi ngày học (Streak)</h3>
+      <p class="stat-value">{{ userStats?.current_streak || 0 }} ngày</p>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🧠</div>
+    <div class="stat-info">
+      <h3>Thẻ đã thuộc (Mature)</h3>
+      <p class="stat-value">{{ srsStats?.status?.mature || 0 }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="action-section">
+  <h2>Cần ôn tập hôm nay</h2>
+  <div class="due-card">
+    <div class="due-info">
+      <span class="badge warning" [class.success]="srsStats?.due_count === 0">
+        {{ srsStats?.due_count || 0 }} thẻ cần ôn
+      </span>
+      <p *ngIf="(srsStats?.due_count || 0) > 0">Bạn có từ vựng cần ôn tập hôm nay để duy trì khả năng ghi nhớ dài hạn.</p>
+      <p *ngIf="srsStats?.due_count === 0">Tuyệt vời! Bạn đã hoàn thành toàn bộ các thẻ cần ôn trong ngày hôm nay.</p>
+    </div>
+    <button class="btn btn-primary" routerLink="/study/today" *ngIf="(srsStats?.due_count || 0) > 0">Bắt đầu học ngay</button>
+  </div>
+</div>

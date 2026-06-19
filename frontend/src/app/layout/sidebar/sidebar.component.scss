@@ -1,0 +1,140 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: $sidebar-expanded;
+  background-color: $bg-sidebar;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-lg $spacing-md;
+  z-index: $z-sidebar;
+
+  .logo {
+    margin-bottom: $spacing-2xl;
+    padding-left: $spacing-sm;
+    
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: $text-primary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      background: linear-gradient(135deg, $text-primary, $accent-blue);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    flex: 1;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-sm $spacing-md;
+      color: $text-secondary;
+      border-radius: $radius-md;
+      font-weight: 500;
+      font-size: $font-size-sm;
+      transition: all $transition-fast;
+      border: 1px solid transparent;
+
+      .icon {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        color: $text-primary;
+        background-color: rgba(255, 255, 255, 0.03);
+        transform: translateX(4px);
+      }
+
+      &.active {
+        color: $text-primary;
+        background-color: rgba($accent-blue, 0.1);
+        border: 1px solid rgba($accent-blue, 0.15);
+        font-weight: 600;
+        
+        .icon {
+          filter: drop-shadow(0 0 4px rgba($accent-blue, 0.5));
+        }
+      }
+    }
+  }
+
+  .sidebar-widgets {
+    margin-bottom: $spacing-xl;
+    border-top: 1px solid $border-color;
+    padding-top: $spacing-lg;
+  }
+
+  .sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    border-top: 1px solid $border-color;
+    padding-top: $spacing-lg;
+
+    .gamification {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid $border-color;
+      padding: $spacing-sm $spacing-md;
+      border-radius: $radius-md;
+
+      .level-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: $font-size-xs;
+        font-weight: 600;
+        margin-bottom: 6px;
+
+        .level {
+          color: $accent-purple;
+        }
+
+        .xp {
+          color: $text-secondary;
+        }
+      }
+
+      .xp-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: $radius-full;
+        overflow: hidden;
+
+        .xp-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $accent-purple, $accent-blue);
+          border-radius: $radius-full;
+        }
+      }
+    }
+
+    .streak {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      font-size: $font-size-sm;
+      font-weight: 600;
+      color: $accent-orange;
+      padding-left: $spacing-sm;
+      
+      .fire {
+        font-size: 1.1rem;
+        animation: pulse 1.5s infinite;
+      }
+    }
+  }
+}

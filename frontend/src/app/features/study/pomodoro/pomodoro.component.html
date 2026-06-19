@@ -1,0 +1,27 @@
+<div class="pomodoro-container" [class.active]="isRunning" [class.break]="isBreak">
+  <div class="timer-display">
+    <h2>{{ formatTime(timeLeft) }}</h2>
+    <span class="status-badge">{{ isBreak ? 'Break Time' : 'Focus Time' }}</span>
+  </div>
+  
+  <div class="controls">
+    <button class="btn-icon" (click)="toggleTimer()">
+      <span *ngIf="!isRunning">▶️</span>
+      <span *ngIf="isRunning">⏸️</span>
+    </button>
+    <button class="btn-icon reset" (click)="resetTimer()">🔄</button>
+  </div>
+  
+  <!-- Progress ring background -->
+  <svg class="progress-ring" width="120" height="120">
+    <circle
+      class="progress-ring__circle"
+      stroke="white"
+      stroke-width="4"
+      fill="transparent"
+      r="52"
+      cx="60"
+      cy="60"
+      [style.strokeDashoffset]="strokeDashoffset"/>
+  </svg>
+</div>

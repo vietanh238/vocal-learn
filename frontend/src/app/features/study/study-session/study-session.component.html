@@ -1,0 +1,106 @@
+<div class="study-session-container">
+  <div class="session-header">
+    <button class="btn btn-icon" routerLink="/dashboard">← Back</button>
+    <div class="progress-info">
+      <span class="badge new">New: {{ stats.new }}</span>
+      <span class="badge learning">Learning: {{ stats.learning }}</span>
+      <span class="badge review">To Review: {{ stats.due }}</span>
+    </div>
+  </div>
+
+  <div class="flashcard-area" *ngIf="currentCard; else noCards">
+    <!-- 3D Flip Card -->
+    <div class="flashcard" [class.flipped]="isFlipped" (click)="flipCard()">
+      <div class="flashcard-inner">
+        
+        <!-- Front side -->
+        <div class="flashcard-front">
+          <h2>{{ currentCard.word_term }}</h2>
+          <p class="ipa" *ngIf="currentCard.word_ipa">{{ currentCard.word_ipa }}</p>
+          <span class="pos-badge">{{ currentCard.word_part_of_speech }}</span>
+          
+          <div class="click-hint">
+            <p>Click to reveal answer</p>
+          </div>
+        </div>
+
+        <!-- Back side -->
+        <div class="flashcard-back">
+          <div class="definition">
+            <h3>Vietnamese Meaning</h3>
+            <p class="definition-vi">{{ currentCard.word_definition_vi }}</p>
+          </div>
+          
+          <div class="definition-en" *ngIf="currentCard.word_definition_en">
+            <h3>English Definition</h3>
+            <p>{{ currentCard.word_definition_en }}</p>
+          </div>
+          
+          <div class="examples" *ngIf="currentCard.word_example_sentences?.length">
+            <h3>Example</h3>
+            <p><i>"{{ currentCard.word_example_sentences?.[0] }}"</i></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Actions & Feynman (Show only when flipped) -->
+    <div class="review-actions" *ngIf="isFlipped">
+      <!-- Feynman Technique Section (Show only when enabled in settings) -->
+      <div class="feynman-section" *ngIf="feynmanEnabled" (click)="$event.stopPropagation()">
+        <h3>Feynman Technique 🧠</h3>
+        <p class="section-desc">Hãy tự giải thích từ vựng này theo cách hiểu của bạn (bằng ngôn từ đơn giản nhất):</p>
+        <div class="feynman-input-group">
+          <textarea 
+            [(ngModel)]="userExplanation" 
+            placeholder="Ví dụ: Spaced Repetition là cách học lặp lại có khoảng cách giúp nhớ lâu..."
+            rows="2"
+            (click)="$event.stopPropagation()">
+          </textarea>
+          <button 
+            class="btn btn-secondary btn-sm" 
+            [disabled]="isSavingExplanation"
+            (click)="saveFeynmanExplanation(); $event.stopPropagation()">
+            {{ isSavingExplanation ? 'Đang lưu...' : 'Lưu giải thích' }}
+          </button>
+        </div>
+      </div>
+
+      <p class="question">Bạn nhớ từ này ở mức độ nào?</p>
+      
+      <!-- SM-2 Rating Buttons -->
+      <div class="buttons-grid sm2-grid" *ngIf="srsAlgorithm === 'sm2'">
+        <button class="btn btn-again" (click)="submitReview(1)">
+          Again <span>(Quên/Sai)</span>
+        </button>
+        <button class="btn btn-hard" (click)="submitReview(2)">
+          Hard <span>(Mơ hồ)</span>
+        </button>
+        <button class="btn btn-good" (click)="submitReview(4)">
+          Good <span>(Tốt)</span>
+        </button>
+        <button class="btn btn-easy" (click)="submitReview(5)">
+          Easy <span>(Rất dễ)</span>
+        </button>
+      </div>
+
+      <!-- Leitner Rating Buttons -->
+      <div class="buttons-grid leitner-grid" *ngIf="srsAlgorithm === 'leitner'">
+        <button class="btn btn-again" (click)="submitReview(1)">
+          Incorrect ❌ <span>(Về Hộp 1)</span>
+        </button>
+        <button class="btn btn-easy" (click)="submitReview(5)">
+          Correct  <span>(Lên Hộp kế)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noCards>
+    <div class="done-message">
+      <h2>🎉 All caught up!</h2>
+      <p>You have reviewed all your due cards for today.</p>
+      <button class="btn btn-primary" routerLink="/dashboard">Return to Dashboard</button>
+    </div>
+  </ng-template>
+</div>

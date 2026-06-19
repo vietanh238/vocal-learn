@@ -1,0 +1,62 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.page-header {
+  margin-bottom: $spacing-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 { font-size: 2rem; color: $text-primary; }
+  p { color: $text-secondary; }
+}
+
+.decks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-xl;
+}
+
+.deck-card {
+  @include glass-panel;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .deck-icon {
+    font-size: 2.5rem;
+  }
+
+  .deck-info {
+    flex: 1;
+
+    h3 { color: $text-primary; margin-bottom: 4px; font-size: 1.2rem; }
+    p { color: $text-secondary; font-size: 0.9rem; }
+  }
+
+  .deck-actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: auto;
+  }
+}
+
+.btn-danger {
+  background: rgba(#ef4444, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(#ef4444, 0.2);
+  padding: $spacing-xs $spacing-sm;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: rgba(#ef4444, 0.2);
+  }
+}

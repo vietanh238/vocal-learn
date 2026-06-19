@@ -1,0 +1,77 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-color;
+
+  .search-bar {
+    position: relative;
+    width: 300px;
+
+    input {
+      width: 100%;
+      padding: $spacing-sm $spacing-md;
+      padding-left: 2.5rem;
+      border-radius: $radius-full;
+      background: $bg-input;
+      border: 1px solid $border-color;
+      color: $text-primary;
+      font-size: $font-size-sm;
+      transition: all $transition-fast;
+
+      &:focus {
+        border-color: $accent-blue;
+        box-shadow: 0 0 10px rgba($accent-blue, 0.1);
+      }
+    }
+
+    &::before {
+      content: '🔍';
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      opacity: 0.5;
+    }
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+
+    span {
+      font-size: $font-size-sm;
+      color: $text-secondary;
+      font-weight: 500;
+    }
+
+    .logout-btn {
+      background: rgba($accent-red, 0.1);
+      color: $accent-red;
+      border: 1px solid rgba($accent-red, 0.2);
+      padding: 6px 14px;
+      border-radius: $radius-md;
+      font-size: $font-size-xs;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: rgba($accent-red, 0.2);
+        border-color: rgba($accent-red, 0.4);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+.content-area {
+  animation: fadeIn 0.4s ease-out;
+}

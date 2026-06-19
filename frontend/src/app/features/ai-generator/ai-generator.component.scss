@@ -1,0 +1,145 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.page-header {
+  margin-bottom: $spacing-xl;
+  
+  h1 { font-size: 2rem; color: $text-primary; }
+  p { color: $text-secondary; }
+}
+
+.ai-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.step-card {
+  @include glass-panel;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  
+  h3 {
+    color: $accent-blue;
+    margin-bottom: $spacing-md;
+    font-size: 1.1rem;
+  }
+  
+  .form-group {
+    margin-bottom: $spacing-md;
+    
+    textarea {
+      width: 100%;
+      padding: $spacing-sm $spacing-md;
+      background: $bg-input;
+      border: 1px solid $border-color;
+      color: $text-primary;
+      border-radius: $radius-md;
+      font-family: inherit;
+      resize: vertical;
+      
+      &:focus {
+        border-color: $accent-blue;
+        outline: none;
+      }
+      
+      &.prompt-box {
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: $text-secondary;
+        background: $bg-tertiary;
+      }
+    }
+  }
+  
+  .help-text {
+    font-size: 0.85rem;
+    color: $text-muted;
+    margin-top: $spacing-sm;
+  }
+}
+
+.preview-section {
+  @include glass-panel;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  
+  h2 { font-size: 1.5rem; margin-bottom: $spacing-md; color: $text-primary; }
+  
+  .deck-select {
+    margin-bottom: $spacing-lg;
+    
+    label {
+      display: block;
+      margin-bottom: 4px;
+      color: $text-secondary;
+      font-weight: 600;
+    }
+    
+    select {
+      width: 100%;
+      padding: $spacing-sm;
+      background: $bg-input;
+      color: $text-primary;
+      border: 1px solid $border-color;
+      border-radius: $radius-md;
+    }
+  }
+  
+  .preview-cards {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    max-height: 400px;
+    overflow-y: auto;
+    @include scrollbar-dark;
+    padding-right: $spacing-sm;
+    margin-bottom: $spacing-xl;
+  }
+  
+  .preview-card {
+    background: $bg-tertiary;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    padding: $spacing-md;
+    position: relative;
+    
+    .card-header {
+      display: flex;
+      gap: $spacing-sm;
+      align-items: center;
+      margin-bottom: $spacing-xs;
+      
+      strong { font-size: 1.2rem; color: $text-primary; }
+      .pos { font-size: 0.8rem; padding: 2px 8px; background: rgba($accent-blue, 0.1); color: $accent-blue; border-radius: $radius-full; text-transform: uppercase; }
+    }
+    
+    .card-body {
+      .vi { font-weight: 600; color: $accent-green; margin-bottom: 4px; }
+      .en { color: $text-secondary; font-size: 0.9rem; margin-bottom: 8px; }
+      .example { font-style: italic; color: $text-muted; font-size: 0.9rem; }
+    }
+    
+    .btn-remove {
+      position: absolute;
+      top: $spacing-sm;
+      right: $spacing-sm;
+      background: none;
+      border: none;
+      color: $text-muted;
+      font-size: 1.2rem;
+      cursor: pointer;
+      &:hover { color: #ef4444; }
+    }
+  }
+}

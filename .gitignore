@@ -1,0 +1,34 @@
+# ==============================
+# ANGULAR (Frontend)
+# ==============================
+node_modules/
+/dist/
+/.angular/
+/.sass-cache/
+/connect.lock
+/coverage/
+/lib/
+npm-debug.log
+yarn-error.log
+
+# ==============================
+# DJANGO (Backend)
+# ==============================
+venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+/media/
+/static_root/
+
+# ==============================
+# HỆ THỐNG & ĐÔI MÔI TRƯỜNG
+# ==============================
+.env
+.DS_Store
+.idea/
+.vscode/

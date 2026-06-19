@@ -1,0 +1,90 @@
+// === Color Palette - Dark Theme ===
+$bg-primary: #0f1019;
+$bg-secondary: #181926;
+$bg-tertiary: #1e2033;
+$bg-card: #1e2033;
+$bg-card-hover: #252740;
+$bg-modal: #1a1b2e;
+$bg-input: #252740;
+$bg-sidebar: #13141f;
+
+// Text
+$text-primary: #e8e9f0;
+$text-secondary: #9ca3b0;
+$text-muted: #6b7280;
+$text-inverse: #0f1019;
+
+// Accent Colors
+$accent-green: #4ade80;
+$accent-orange: #fb923c;
+$accent-blue: #60a5fa;
+$accent-pink: #f472b6;
+$accent-purple: #a78bfa;
+$accent-yellow: #fbbf24;
+$accent-red: #f87171;
+$accent-teal: #2dd4bf;
+
+// SRS Level Colors
+$srs-new: #ef4444;
+$srs-learning: #f59e0b;
+$srs-young: #3b82f6;
+$srs-mature: #22c55e;
+$srs-mastered: #a855f7;
+
+// Leitner Box Colors
+$leitner-1: #ef4444;
+$leitner-2: #f97316;
+$leitner-3: #eab308;
+$leitner-4: #22c55e;
+$leitner-5: #8b5cf6;
+
+// Borders & Shadows
+$border-color: rgba(255, 255, 255, 0.06);
+$border-color-hover: rgba(255, 255, 255, 0.12);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+$shadow-glow: 0 0 20px rgba(96, 165, 250, 0.15);
+
+// Border Radius
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$radius-xl: 20px;
+$radius-full: 999px;
+
+// Typography
+$font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-mono: 'JetBrains Mono', monospace;
+
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.25s ease;
+$transition-slow: 0.4s ease;
+
+// Sidebar
+$sidebar-width: 80px;
+$sidebar-expanded: 220px;
+
+// Z-index
+$z-sidebar: 100;
+$z-modal-backdrop: 200;
+$z-modal: 300;
+$z-tooltip: 400;
+$z-notification: 500;

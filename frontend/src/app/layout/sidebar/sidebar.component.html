@@ -1,0 +1,41 @@
+<aside class="sidebar">
+  <div class="logo">
+    <h1>VocaLearn 🧠</h1>
+  </div>
+  <nav class="nav-menu">
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a routerLink="/decks" routerLinkActive="active">
+      <span class="icon">📚</span> My Decks
+    </a>
+    <a routerLink="/study/today" routerLinkActive="active">
+      <span class="icon">🔥</span> Study Session
+    </a>
+    <a routerLink="/ai-cards" routerLinkActive="active">
+      <span class="icon">🤖</span> AI Generator
+    </a>
+    <a routerLink="/settings" routerLinkActive="active">
+      <span class="icon">⚙️</span> Settings
+    </a>
+  </nav>
+  
+  <div class="sidebar-widgets">
+    <app-pomodoro></app-pomodoro>
+  </div>
+
+  <div class="sidebar-footer" *ngIf="stats">
+    <div class="gamification">
+      <div class="level-info">
+        <span class="level">Lvl {{ stats.level }}</span>
+        <span class="xp">{{ currentXpInLevel }} / 1000 XP</span>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-fill" [style.width.%]="xpPercentage"></div>
+      </div>
+    </div>
+    <div class="streak">
+      <span class="fire">🔥</span> {{ stats.current_streak }} ngày liên tục!
+    </div>
+  </div>
+</aside>

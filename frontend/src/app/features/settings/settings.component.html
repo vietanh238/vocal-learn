@@ -1,0 +1,75 @@
+<div class="page-header">
+  <div class="header-content">
+    <h1>Settings ⚙️</h1>
+    <p>Configure your learning experience.</p>
+  </div>
+</div>
+
+<div class="settings-container">
+  <div class="settings-card">
+    <h2>Language Preferences</h2>
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>Interface Language</label>
+        <p>Choose the language for the app interface.</p>
+      </div>
+      <select class="form-control" [(ngModel)]="currentLang">
+        <option value="en">English</option>
+        <option value="vi">Tiếng Việt</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h2>Study Preferences</h2>
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>Daily Goal</label>
+        <p>Number of new cards to learn per day.</p>
+      </div>
+      <input type="number" class="form-control short-input" [(ngModel)]="dailyGoal">
+    </div>
+    
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>Enable Feynman Technique Fields</label>
+        <p>Show a text area to explain concepts in your own words.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="feynmanEnabled">
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>SRS Algorithm</label>
+        <p>Choose between SuperMemo-2 (SM-2) or Leitner Box System.</p>
+      </div>
+      <select class="form-control" [(ngModel)]="srsAlgorithm">
+        <option value="sm2">SuperMemo-2 (SM-2)</option>
+        <option value="leitner">Leitner Box System</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h2>Pomodoro Timer</h2>
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>Focus Duration</label>
+        <p>Minutes per focus session.</p>
+      </div>
+      <input type="number" class="form-control short-input" [(ngModel)]="pomodoroFocus">
+    </div>
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>Break Duration</label>
+        <p>Minutes per short break.</p>
+      </div>
+      <input type="number" class="form-control short-input" [(ngModel)]="pomodoroBreak">
+    </div>
+  </div>
+  
+  <button class="btn btn-primary" (click)="saveSettings()">Save Settings</button>
+</div>

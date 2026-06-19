@@ -1,0 +1,94 @@
+<div class="page-header">
+  <div class="header-content">
+    <h1>AI Flashcard Generator 🤖</h1>
+    <p>Generate vocabulary cards using ChatGPT or Gemini.</p>
+  </div>
+</div>
+
+<div class="ai-container">
+  
+  <!-- Left Side: Prompt Generation & Workflow -->
+  <div class="input-section">
+    <!-- Step 1 -->
+    <div class="step-card">
+      <h3>Step 1: Enter Words</h3>
+      <div class="form-group">
+        <textarea 
+          rows="3" 
+          placeholder="e.g., good, leave, abundant, scarcity"
+          [(ngModel)]="sourceWords">
+        </textarea>
+      </div>
+      <button class="btn btn-secondary" (click)="generatePrompt()" [disabled]="!sourceWords.trim()">
+        1. Generate Prompt
+      </button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card" *ngIf="generatedPrompt">
+      <h3>Step 2: Copy & Paste to AI</h3>
+      <div class="form-group">
+        <textarea 
+          rows="6" 
+          readonly
+          class="prompt-box"
+          [(ngModel)]="generatedPrompt">
+        </textarea>
+      </div>
+      <button class="btn btn-secondary" (click)="copyPrompt()">
+        2. Copy Prompt
+      </button>
+      <p class="help-text">Open ChatGPT/Gemini, paste this prompt, and copy the JSON result.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card">
+      <h3>Step 3: Paste JSON Result</h3>
+      <div class="form-group">
+        <textarea 
+          rows="4" 
+          placeholder="Paste the [ { ... } ] JSON array here"
+          [(ngModel)]="jsonInput">
+        </textarea>
+      </div>
+      <button class="btn btn-primary" (click)="parseJson()" [disabled]="!jsonInput.trim()">
+        3. Parse JSON & Preview
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Side: Preview -->
+  <div class="preview-section" *ngIf="generatedCards.length > 0">
+    <h2>Preview & Save</h2>
+    
+    <div class="form-group deck-select">
+      <label>Select Deck</label>
+      <select class="form-control" [(ngModel)]="selectedDeckId" (change)="onDeckChange($event)">
+        <option *ngFor="let deck of decks" [value]="deck.id">{{ deck.name }}</option>
+        <option value="new">+ Create New Deck</option>
+      </select>
+    </div>
+
+    <div class="preview-cards">
+      <div class="preview-card" *ngFor="let card of generatedCards; let i = index">
+        <div class="card-header">
+          <strong>{{ card.term }}</strong>
+          <span class="pos">{{ card.part_of_speech }}</span>
+        </div>
+        <div class="card-body">
+          <p class="vi">{{ card.definition_vi }}</p>
+          <p class="en">{{ card.definition_en }}</p>
+          <p class="example">"{{ card.example_sentences[0] }}"</p>
+        </div>
+        <button class="btn-remove" (click)="removeCard(i)">×</button>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button class="btn btn-primary btn-full" (click)="saveToDeck()" [disabled]="isLoading">
+        {{ isLoading ? 'Saving...' : 'Save ' + generatedCards.length + ' Cards to Deck' }}
+      </button>
+    </div>
+  </div>
+
+</div>

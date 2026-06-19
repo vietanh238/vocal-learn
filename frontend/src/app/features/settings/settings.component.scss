@@ -1,0 +1,117 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  max-width: 800px;
+}
+
+.settings-card {
+  @include glass-panel;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  
+  h2 {
+    font-size: 1.2rem;
+    margin-bottom: $spacing-lg;
+    color: $accent-blue;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: $spacing-sm;
+  }
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md 0;
+  
+  &:not(:last-child) {
+    border-bottom: 1px dashed rgba($border-color, 0.5);
+  }
+  
+  .setting-info {
+    flex: 1;
+    padding-right: $spacing-xl;
+    
+    label {
+      font-weight: 600;
+      color: $text-primary;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    p {
+      color: $text-secondary;
+      font-size: 0.9rem;
+    }
+  }
+  
+  .form-control {
+    min-width: 150px;
+  }
+  
+  .short-input {
+    width: 80px;
+    min-width: auto;
+    text-align: center;
+  }
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  
+  input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $bg-tertiary;
+  transition: .4s;
+  
+  &:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+  }
+}
+
+input:checked + .slider {
+  background-color: $accent-blue;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px $accent-blue;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.slider.round {
+  border-radius: 34px;
+  
+  &:before {
+    border-radius: 50%;
+  }
+}

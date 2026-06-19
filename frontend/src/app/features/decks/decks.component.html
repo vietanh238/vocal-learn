@@ -1,0 +1,26 @@
+<div class="page-header">
+  <div class="header-content">
+    <h1>My Decks</h1>
+    <p>Manage your vocabulary collections.</p>
+  </div>
+  <button class="btn btn-primary" (click)="createDeck()">+ New Deck</button>
+</div>
+
+<div class="decks-grid">
+  <!-- Dynamic Decks -->
+  <div class="deck-card" *ngFor="let deck of decks">
+    <div class="deck-icon">📁</div>
+    <div class="deck-info">
+      <h3>{{ deck.name }}</h3>
+      <p>{{ deck.word_count || 0 }} từ vựng</p>
+    </div>
+    <div class="deck-actions">
+      <button class="btn btn-secondary btn-sm" [routerLink]="['/study', 'deck-' + deck.id]">Study</button>
+      <button class="btn btn-danger btn-sm" (click)="deleteDeck(deck.id)">Delete</button>
+    </div>
+  </div>
+  
+  <div class="no-decks-message" *ngIf="decks.length === 0">
+    <p>Bạn chưa có bộ thẻ nào. Hãy nhấp nút "+ New Deck" ở trên để bắt đầu!</p>
+  </div>
+</div>
