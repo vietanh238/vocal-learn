@@ -3,11 +3,16 @@
   <main class="main-content">
     <header class="top-nav">
       <div class="search-bar">
-        <input type="text" placeholder="Search vocabulary...">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Tìm kiếm từ vựng...">
       </div>
       <div class="user-profile">
-        <span>{{ userEmail }}</span>
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <div class="user-info">
+          <span class="user-name">{{ userEmail }}</span>
+          <span class="user-role">Learner</span>
+        </div>
+        <div class="user-avatar">{{ userEmail[0]?.toUpperCase() }}</div>
+        <button class="logout-btn" (click)="logout()">Đăng xuất</button>
       </div>
     </header>
     <div class="content-area">

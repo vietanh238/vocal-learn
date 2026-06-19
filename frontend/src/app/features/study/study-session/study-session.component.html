@@ -1,106 +1,188 @@
 <div class="study-session-container">
-  <div class="session-header">
-    <button class="btn btn-icon" routerLink="/dashboard">← Back</button>
-    <div class="progress-info">
-      <span class="badge new">New: {{ stats.new }}</span>
-      <span class="badge learning">Learning: {{ stats.learning }}</span>
-      <span class="badge review">To Review: {{ stats.due }}</span>
-    </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Đang tải thẻ ôn tập...</p>
   </div>
 
-  <div class="flashcard-area" *ngIf="currentCard; else noCards">
-    <!-- 3D Flip Card -->
-    <div class="flashcard" [class.flipped]="isFlipped" (click)="flipCard()">
-      <div class="flashcard-inner">
-        
-        <!-- Front side -->
-        <div class="flashcard-front">
-          <h2>{{ currentCard.word_term }}</h2>
-          <p class="ipa" *ngIf="currentCard.word_ipa">{{ currentCard.word_ipa }}</p>
-          <span class="pos-badge">{{ currentCard.word_part_of_speech }}</span>
-          
-          <div class="click-hint">
-            <p>Click to reveal answer</p>
-          </div>
-        </div>
+  <ng-container *ngIf="!isLoading">
+    <!-- Session header -->
+    <div class="session-header">
+      <button class="btn btn-icon back-btn" routerLink="/dashboard">← Quay lại</button>
 
-        <!-- Back side -->
-        <div class="flashcard-back">
-          <div class="definition">
-            <h3>Vietnamese Meaning</h3>
-            <p class="definition-vi">{{ currentCard.word_definition_vi }}</p>
-          </div>
-          
-          <div class="definition-en" *ngIf="currentCard.word_definition_en">
-            <h3>English Definition</h3>
-            <p>{{ currentCard.word_definition_en }}</p>
-          </div>
-          
-          <div class="examples" *ngIf="currentCard.word_example_sentences?.length">
-            <h3>Example</h3>
-            <p><i>"{{ currentCard.word_example_sentences?.[0] }}"</i></p>
-          </div>
+      <div class="session-progress">
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="progressPercent"
+               [class.complete]="progressPercent === 100"></div>
         </div>
+        <span class="progress-text">{{ currentIndex }} / {{ dueCards.length }}</span>
+      </div>
+
+      <div class="session-badges">
+        <span class="badge badge-new" *ngIf="stats.new > 0">🆕 {{ stats.new }}</span>
+        <span class="badge badge-learn" *ngIf="stats.learning > 0">📖 {{ stats.learning }}</span>
+        <span class="badge badge-review">📋 {{ stats.due }} còn lại</span>
+        <span class="badge badge-acc" *ngIf="sessionTotal > 0">🎯 {{ accuracyPercent }}%</span>
       </div>
     </div>
 
-    <!-- Review Actions & Feynman (Show only when flipped) -->
-    <div class="review-actions" *ngIf="isFlipped">
-      <!-- Feynman Technique Section (Show only when enabled in settings) -->
-      <div class="feynman-section" *ngIf="feynmanEnabled" (click)="$event.stopPropagation()">
-        <h3>Feynman Technique 🧠</h3>
-        <p class="section-desc">Hãy tự giải thích từ vựng này theo cách hiểu của bạn (bằng ngôn từ đơn giản nhất):</p>
-        <div class="feynman-input-group">
-          <textarea 
-            [(ngModel)]="userExplanation" 
-            placeholder="Ví dụ: Spaced Repetition là cách học lặp lại có khoảng cách giúp nhớ lâu..."
-            rows="2"
-            (click)="$event.stopPropagation()">
-          </textarea>
-          <button 
-            class="btn btn-secondary btn-sm" 
-            [disabled]="isSavingExplanation"
-            (click)="saveFeynmanExplanation(); $event.stopPropagation()">
-            {{ isSavingExplanation ? 'Đang lưu...' : 'Lưu giải thích' }}
+    <!-- Flashcard area -->
+    <div class="flashcard-area" *ngIf="currentCard; else noCards">
+
+      <!-- Card counter strip -->
+      <div class="card-type-strip" [class]="'type-' + currentCard.status">
+        <span class="type-label">{{ currentCard.status | uppercase }}</span>
+        <span class="deck-name" *ngIf="currentCard.deck_name">· {{ currentCard.deck_name }}</span>
+      </div>
+
+      <!-- 3D Flip Card -->
+      <div class="flashcard" [class.flipped]="isFlipped" (click)="flipCard()">
+        <div class="flashcard-inner">
+
+          <!-- Front -->
+          <div class="flashcard-front">
+            <div class="front-content">
+              <div class="word-display">
+                <h2>{{ currentCard.word_term }}</h2>
+                <p class="ipa" *ngIf="currentCard.word_ipa">{{ currentCard.word_ipa }}</p>
+              </div>
+              <span class="pos-badge" *ngIf="currentCard.word_part_of_speech">
+                {{ currentCard.word_part_of_speech }}
+              </span>
+            </div>
+            <div class="click-hint">
+              <span>Nhấn để lật thẻ →</span>
+            </div>
+          </div>
+
+          <!-- Back -->
+          <div class="flashcard-back">
+            <div class="back-scroll">
+              <div class="back-section vi-section">
+                <span class="section-label">🇻🇳 Nghĩa tiếng Việt</span>
+                <p class="definition-vi">{{ currentCard.word_definition_vi }}</p>
+              </div>
+              <div class="back-section" *ngIf="currentCard.word_definition_en">
+                <span class="section-label">🇬🇧 English Definition</span>
+                <p>{{ currentCard.word_definition_en }}</p>
+              </div>
+              <div class="back-section" *ngIf="currentCard.word_example_sentences?.length">
+                <span class="section-label">💬 Example</span>
+                <p class="example-sentence">
+                  "{{ currentCard.word_example_sentences?.[0] }}"
+                </p>
+              </div>
+              <div class="back-section" *ngIf="currentCard.word_collocations?.length">
+                <span class="section-label">🔗 Collocations</span>
+                <div class="collocations">
+                  <span class="collocation-chip" *ngFor="let col of currentCard.word_collocations">
+                    {{ col }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Review Actions (after flip) -->
+      <div class="review-actions" *ngIf="isFlipped" [@fadeInUp]>
+
+        <!-- Feynman section -->
+        <div class="feynman-section" *ngIf="feynmanEnabled" (click)="$event.stopPropagation()">
+          <div class="feynman-header">
+            <span class="feynman-title">🧠 Feynman Technique</span>
+            <span class="feynman-saved" *ngIf="feynmanSaved">✅ Đã lưu</span>
+          </div>
+          <p class="feynman-desc">Giải thích từ này theo cách hiểu của bạn:</p>
+          <div class="feynman-input-group">
+            <textarea
+              [(ngModel)]="userExplanation"
+              placeholder="Ví dụ: 'Redundant là khi thứ gì đó không cần thiết vì đã có đủ rồi...'"
+              rows="2"
+              (click)="$event.stopPropagation()">
+            </textarea>
+            <button class="feynman-save-btn"
+                    [disabled]="isSavingExplanation || !userExplanation.trim()"
+                    (click)="saveFeynmanExplanation(); $event.stopPropagation()">
+              {{ isSavingExplanation ? '...' : 'Lưu' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Rating question -->
+        <p class="rating-question">Bạn nhớ từ này như thế nào?</p>
+
+        <!-- SM-2 buttons -->
+        <div class="rating-grid sm2-grid" *ngIf="srsAlgorithm === 'sm2'">
+          <button class="rating-btn again" (click)="submitReview(1)" [disabled]="isSubmitting">
+            <span class="btn-emoji">😵</span>
+            <span class="btn-label">Again</span>
+            <span class="btn-sub">Quên hoàn toàn</span>
+          </button>
+          <button class="rating-btn hard" (click)="submitReview(2)" [disabled]="isSubmitting">
+            <span class="btn-emoji">😓</span>
+            <span class="btn-label">Hard</span>
+            <span class="btn-sub">Nhớ mơ hồ</span>
+          </button>
+          <button class="rating-btn good" (click)="submitReview(4)" [disabled]="isSubmitting">
+            <span class="btn-emoji">😊</span>
+            <span class="btn-label">Good</span>
+            <span class="btn-sub">Nhớ tốt</span>
+          </button>
+          <button class="rating-btn easy" (click)="submitReview(5)" [disabled]="isSubmitting">
+            <span class="btn-emoji">🚀</span>
+            <span class="btn-label">Easy</span>
+            <span class="btn-sub">Rất dễ</span>
           </button>
         </div>
-      </div>
 
-      <p class="question">Bạn nhớ từ này ở mức độ nào?</p>
-      
-      <!-- SM-2 Rating Buttons -->
-      <div class="buttons-grid sm2-grid" *ngIf="srsAlgorithm === 'sm2'">
-        <button class="btn btn-again" (click)="submitReview(1)">
-          Again <span>(Quên/Sai)</span>
-        </button>
-        <button class="btn btn-hard" (click)="submitReview(2)">
-          Hard <span>(Mơ hồ)</span>
-        </button>
-        <button class="btn btn-good" (click)="submitReview(4)">
-          Good <span>(Tốt)</span>
-        </button>
-        <button class="btn btn-easy" (click)="submitReview(5)">
-          Easy <span>(Rất dễ)</span>
-        </button>
-      </div>
+        <!-- Leitner buttons -->
+        <div class="rating-grid leitner-grid" *ngIf="srsAlgorithm === 'leitner'">
+          <button class="rating-btn again" (click)="submitReview(1)" [disabled]="isSubmitting">
+            <span class="btn-emoji">❌</span>
+            <span class="btn-label">Incorrect</span>
+            <span class="btn-sub">Về Hộp 1</span>
+          </button>
+          <button class="rating-btn easy" (click)="submitReview(5)" [disabled]="isSubmitting">
+            <span class="btn-emoji">✅</span>
+            <span class="btn-label">Correct</span>
+            <span class="btn-sub">Lên Hộp kế</span>
+          </button>
+        </div>
 
-      <!-- Leitner Rating Buttons -->
-      <div class="buttons-grid leitner-grid" *ngIf="srsAlgorithm === 'leitner'">
-        <button class="btn btn-again" (click)="submitReview(1)">
-          Incorrect ❌ <span>(Về Hộp 1)</span>
-        </button>
-        <button class="btn btn-easy" (click)="submitReview(5)">
-          Correct  <span>(Lên Hộp kế)</span>
-        </button>
       </div>
     </div>
-  </div>
 
-  <ng-template #noCards>
-    <div class="done-message">
-      <h2>🎉 All caught up!</h2>
-      <p>You have reviewed all your due cards for today.</p>
-      <button class="btn btn-primary" routerLink="/dashboard">Return to Dashboard</button>
-    </div>
-  </ng-template>
+    <!-- All done -->
+    <ng-template #noCards>
+      <div class="done-screen">
+        <div class="done-emoji">🎉</div>
+        <h2>Hoàn thành rồi!</h2>
+        <p>Bạn đã ôn tập xong tất cả thẻ hôm nay.</p>
+        <div class="done-stats" *ngIf="sessionTotal > 0">
+          <div class="done-stat">
+            <span class="done-val">{{ sessionTotal }}</span>
+            <span class="done-lbl">thẻ đã học</span>
+          </div>
+          <div class="done-divider"></div>
+          <div class="done-stat">
+            <span class="done-val">{{ accuracyPercent }}%</span>
+            <span class="done-lbl">độ chính xác</span>
+          </div>
+          <div class="done-divider"></div>
+          <div class="done-stat">
+            <span class="done-val">{{ sessionCorrect }}</span>
+            <span class="done-lbl">trả lời đúng</span>
+          </div>
+        </div>
+        <div class="done-actions">
+          <button class="btn btn-primary" routerLink="/dashboard">🏠 Về Dashboard</button>
+          <button class="btn btn-secondary" routerLink="/decks">📚 My Decks</button>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
 </div>

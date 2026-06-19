@@ -1,5 +1,6 @@
 @use 'styles/variables' as *;
 @use 'styles/mixins' as *;
+@use 'sass:color';
 
 *, *::before, *::after {
   margin: 0;
@@ -21,13 +22,16 @@ body {
   @include scrollbar-dark;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(96, 165, 250, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.04) 0%, transparent 60%);
 }
 
 a {
   color: $accent-blue;
   text-decoration: none;
   transition: color $transition-fast;
-  &:hover { color: lighten($accent-blue, 10%); }
+  &:hover { color: color.scale($accent-blue, $lightness: 20%); }
 }
 
 button {
@@ -42,43 +46,66 @@ input, textarea, select {
   border-radius: $radius-md;
   padding: $spacing-sm $spacing-md;
   outline: none;
-  transition: border-color $transition-fast;
-  
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
   &:focus {
-    border-color: $accent-blue;
+    border-color: rgba($accent-blue, 0.6);
+    box-shadow: 0 0 0 3px rgba($accent-blue, 0.1);
   }
-  
+
   &::placeholder {
     color: $text-muted;
   }
 }
 
-// Toast / Notification animations
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+// Global button styles
+.btn {
+  @include button-base;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, $accent-blue, color.adjust($accent-blue, $hue: 30deg));
+    color: white;
+    border: none;
+    padding: $spacing-sm $spacing-lg;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba($accent-blue, 0.4);
+    }
+    &:active { transform: translateY(0); }
+  }
+
+  &.btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: $text-primary;
+    border: 1px solid $border-color;
+    padding: $spacing-sm $spacing-lg;
+
+    &:hover:not(:disabled) {
+      background: rgba(255,255,255,0.1);
+      border-color: $border-color-hover;
+    }
+  }
+
+  &.btn-icon {
+    background: rgba(255,255,255,0.05);
+    color: $text-secondary;
+    border: 1px solid $border-color;
+    padding: $spacing-sm $spacing-md;
+
+    &:hover {
+      background: rgba(255,255,255,0.08);
+      color: $text-primary;
+    }
+  }
+
+  &.btn-sm {
+    font-size: $font-size-xs;
+    padding: $spacing-xs $spacing-sm;
+  }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-@keyframes flip {
-  0% { transform: perspective(600px) rotateY(0deg); }
-  100% { transform: perspective(600px) rotateY(180deg); }
-}
-
+// Page layout
 .app-container {
   display: flex;
   min-height: 100vh;
@@ -87,6 +114,126 @@ input, textarea, select {
 .main-content {
   flex: 1;
   margin-left: $sidebar-expanded;
-  padding: $spacing-lg;
+  padding: $spacing-lg $spacing-xl;
   transition: margin-left $transition-base;
+  min-height: 100vh;
+}
+
+// Page header
+.page-header {
+  margin-bottom: $spacing-xl;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $text-primary;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  p {
+    color: $text-secondary;
+    margin-top: 4px;
+    font-size: $font-size-sm;
+  }
+
+  &.flex-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+// Animations
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes progressGrow {
+  from { width: 0; }
+}
+
+// Skeleton loading
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.5s infinite;
+  border-radius: $radius-sm;
+}
+
+// Form control
+.form-control {
+  width: 100%;
+}
+
+// Empty state
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: $text-muted;
+
+  .empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: $spacing-lg;
+    opacity: 0.5;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: $text-secondary;
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    max-width: 300px;
+    margin: 0 auto $spacing-lg;
+    line-height: 1.7;
+  }
 }

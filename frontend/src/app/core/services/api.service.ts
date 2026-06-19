@@ -37,6 +37,7 @@ export class ApiService {
   getWord(id: number): Observable<Word> { return this.http.get<Word>(`${this.BASE_URL}/words/${id}/`); }
   createWord(data: Partial<Word>): Observable<Word> { return this.http.post<Word>(`${this.BASE_URL}/words/`, data); }
   updateWord(id: number, data: Partial<Word>): Observable<Word> { return this.http.put<Word>(`${this.BASE_URL}/words/${id}/`, data); }
+  patchWord(id: number, data: Partial<Word>): Observable<Word> { return this.http.patch<Word>(`${this.BASE_URL}/words/${id}/`, data); }
   deleteWord(id: number): Observable<void> { return this.http.delete<void>(`${this.BASE_URL}/words/${id}/`); }
   bulkImportWords(deckId: number, words: Partial<Word>[]): Observable<any> { return this.http.post<any>(`${this.BASE_URL}/words/bulk_import/`, { deck_id: deckId, words }); }
   

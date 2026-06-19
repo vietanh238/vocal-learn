@@ -1,23 +1,16 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-.page-header {
-  margin-bottom: $spacing-xl;
-  
-  h1 { font-size: 2rem; color: $text-primary; }
-  p { color: $text-secondary; }
-}
-
 .ai-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-xl;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  animation: fadeIn 0.4s ease-out;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
+// ─── Step cards (left panel) ──────────────────────────────────────
 .input-section {
   display: flex;
   flex-direction: column;
@@ -26,110 +19,198 @@
 
 .step-card {
   @include glass-panel;
+  @include shine-effect;
   padding: $spacing-lg;
   border-radius: $radius-lg;
-  
+  animation: fadeInUp 0.4s ease-out both;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+
   h3 {
+    font-size: $font-size-sm;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     color: $accent-blue;
     margin-bottom: $spacing-md;
-    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 14px;
+      background: $accent-blue;
+      border-radius: $radius-full;
+    }
   }
-  
+
   .form-group {
     margin-bottom: $spacing-md;
-    
+
     textarea {
       width: 100%;
       padding: $spacing-sm $spacing-md;
-      background: $bg-input;
+      background: rgba(0,0,0,0.2);
       border: 1px solid $border-color;
       color: $text-primary;
       border-radius: $radius-md;
-      font-family: inherit;
+      font-family: $font-primary;
       resize: vertical;
-      
+      transition: all $transition-fast;
+
       &:focus {
-        border-color: $accent-blue;
+        border-color: rgba($accent-blue, 0.5);
+        background: rgba(0,0,0,0.3);
+        box-shadow: 0 0 0 3px rgba($accent-blue, 0.08);
         outline: none;
       }
-      
+
       &.prompt-box {
-        font-family: monospace;
-        font-size: 0.9rem;
-        color: $text-secondary;
-        background: $bg-tertiary;
+        font-family: $font-mono;
+        font-size: $font-size-xs;
+        color: $accent-teal;
+        background: rgba(0,0,0,0.35);
+        border-color: rgba($accent-teal, 0.2);
+        line-height: 1.6;
       }
     }
   }
-  
+
   .help-text {
-    font-size: 0.85rem;
+    font-size: $font-size-xs;
     color: $text-muted;
     margin-top: $spacing-sm;
+    line-height: 1.5;
   }
 }
 
+// ─── Preview section (right panel) ────────────────────────────────
 .preview-section {
   @include glass-panel;
   padding: $spacing-xl;
   border-radius: $radius-lg;
-  
-  h2 { font-size: 1.5rem; margin-bottom: $spacing-md; color: $text-primary; }
-  
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 0.4s ease-out 0.2s both;
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-color;
+  }
+
   .deck-select {
     margin-bottom: $spacing-lg;
-    
+
     label {
       display: block;
-      margin-bottom: 4px;
-      color: $text-secondary;
-      font-weight: 600;
+      font-size: $font-size-xs;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $text-muted;
+      margin-bottom: 6px;
     }
-    
+
     select {
       width: 100%;
-      padding: $spacing-sm;
-      background: $bg-input;
+      padding: $spacing-sm $spacing-md;
+      background: rgba(0,0,0,0.2);
       color: $text-primary;
       border: 1px solid $border-color;
       border-radius: $radius-md;
+      cursor: pointer;
+
+      &:focus {
+        border-color: rgba($accent-blue, 0.5);
+        outline: none;
+      }
+
+      option { background: $bg-secondary; }
     }
   }
-  
+
   .preview-cards {
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
-    max-height: 400px;
+    flex: 1;
+    max-height: 380px;
     overflow-y: auto;
     @include scrollbar-dark;
-    padding-right: $spacing-sm;
-    margin-bottom: $spacing-xl;
+    padding-right: $spacing-xs;
+    margin-bottom: $spacing-lg;
   }
-  
+
   .preview-card {
-    background: $bg-tertiary;
+    background: rgba(255,255,255,0.02);
     border: 1px solid $border-color;
     border-radius: $radius-md;
     padding: $spacing-md;
     position: relative;
-    
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+    }
+
     .card-header {
       display: flex;
-      gap: $spacing-sm;
       align-items: center;
+      gap: $spacing-sm;
       margin-bottom: $spacing-xs;
-      
-      strong { font-size: 1.2rem; color: $text-primary; }
-      .pos { font-size: 0.8rem; padding: 2px 8px; background: rgba($accent-blue, 0.1); color: $accent-blue; border-radius: $radius-full; text-transform: uppercase; }
+
+      strong {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: $text-primary;
+      }
+      .pos {
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        background: rgba($accent-blue, 0.1);
+        color: $accent-blue;
+        border-radius: $radius-full;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba($accent-blue, 0.15);
+      }
     }
-    
+
     .card-body {
-      .vi { font-weight: 600; color: $accent-green; margin-bottom: 4px; }
-      .en { color: $text-secondary; font-size: 0.9rem; margin-bottom: 8px; }
-      .example { font-style: italic; color: $text-muted; font-size: 0.9rem; }
+      .vi {
+        font-weight: 700;
+        color: $accent-green;
+        margin-bottom: 2px;
+        font-size: $font-size-sm;
+      }
+      .en {
+        color: $text-secondary;
+        font-size: $font-size-xs;
+        margin-bottom: 6px;
+        line-height: 1.5;
+      }
+      .example {
+        font-style: italic;
+        color: $text-muted;
+        font-size: $font-size-xs;
+        line-height: 1.5;
+
+        &::before { content: '"'; }
+        &::after  { content: '"'; }
+      }
     }
-    
+
     .btn-remove {
       position: absolute;
       top: $spacing-sm;
@@ -137,9 +218,29 @@
       background: none;
       border: none;
       color: $text-muted;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       cursor: pointer;
-      &:hover { color: #ef4444; }
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $radius-sm;
+      transition: all $transition-fast;
+
+      &:hover {
+        color: $accent-red;
+        background: rgba($accent-red, 0.1);
+      }
+    }
+  }
+
+  .actions {
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+      padding: $spacing-md $spacing-lg;
+      font-size: $font-size-base;
     }
   }
 }

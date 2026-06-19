@@ -1,42 +1,173 @@
-<div class="page-header">
-  <h1>Dashboard</h1>
-  <p>Chào mừng quay trở lại! Dưới đây là tiến trình học tập của bạn.</p>
-</div>
+<div class="dashboard-container">
 
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-icon">📚</div>
-    <div class="stat-info">
-      <h3>Tổng số từ vựng</h3>
-      <p class="stat-value">{{ srsStats?.total || 0 }}</p>
+  <!-- Hero greeting -->
+  <div class="dashboard-hero">
+    <div class="hero-text">
+      <h1>{{ greeting }} 👋</h1>
+      <p>Tiếp tục hành trình chinh phục từ vựng của bạn!</p>
+    </div>
+    <div class="hero-cta" *ngIf="!isLoading">
+      <div class="due-badge" [class.no-due]="(srsStats?.due_count || 0) === 0">
+        <span class="due-count">{{ srsStats?.due_count || 0 }}</span>
+        <span class="due-label">thẻ cần ôn</span>
+      </div>
+      <button class="btn btn-primary btn-study"
+              routerLink="/study/today"
+              *ngIf="(srsStats?.due_count || 0) > 0">
+        🔥 Học ngay
+      </button>
+      <span class="all-done" *ngIf="(srsStats?.due_count || 0) === 0">✅ Xong rồi!</span>
     </div>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon">🔥</div>
-    <div class="stat-info">
-      <h3>Chuỗi ngày học (Streak)</h3>
-      <p class="stat-value">{{ userStats?.current_streak || 0 }} ngày</p>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon">🧠</div>
-    <div class="stat-info">
-      <h3>Thẻ đã thuộc (Mature)</h3>
-      <p class="stat-value">{{ srsStats?.status?.mature || 0 }}</p>
-    </div>
-  </div>
-</div>
 
-<div class="action-section">
-  <h2>Cần ôn tập hôm nay</h2>
-  <div class="due-card">
-    <div class="due-info">
-      <span class="badge warning" [class.success]="srsStats?.due_count === 0">
-        {{ srsStats?.due_count || 0 }} thẻ cần ôn
-      </span>
-      <p *ngIf="(srsStats?.due_count || 0) > 0">Bạn có từ vựng cần ôn tập hôm nay để duy trì khả năng ghi nhớ dài hạn.</p>
-      <p *ngIf="srsStats?.due_count === 0">Tuyệt vời! Bạn đã hoàn thành toàn bộ các thẻ cần ôn trong ngày hôm nay.</p>
-    </div>
-    <button class="btn btn-primary" routerLink="/study/today" *ngIf="(srsStats?.due_count || 0) > 0">Bắt đầu học ngay</button>
+  <!-- Loading skeleton -->
+  <div class="stats-grid skeleton-grid" *ngIf="isLoading">
+    <div class="skeleton stat-skeleton" *ngFor="let i of [1,2,3,4]"></div>
   </div>
+
+  <!-- Stats row -->
+  <div class="stats-grid" *ngIf="!isLoading">
+    <!-- XP / Level card -->
+    <div class="stat-card xp-card">
+      <div class="stat-header">
+        <div class="stat-icon">⚡</div>
+        <span class="stat-label">Kinh nghiệm</span>
+      </div>
+      <div class="stat-value">{{ userStats?.total_xp || 0 }} <small>XP</small></div>
+      <div class="level-badge">Level {{ userStats?.level || 1 }}</div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-track">
+          <div class="xp-bar-fill" [style.width.%]="xpProgress" [style.animation-delay]="'0.3s'"></div>
+        </div>
+        <span class="xp-bar-label">{{ xpInLevel }} / 1000 XP</span>
+      </div>
+    </div>
+
+    <!-- Streak card -->
+    <div class="stat-card streak-card">
+      <div class="stat-header">
+        <div class="stat-icon">🔥</div>
+        <span class="stat-label">Chuỗi ngày học</span>
+      </div>
+      <div class="stat-value">{{ userStats?.current_streak || 0 }}<small>ngày</small></div>
+      <div class="streak-sub">
+        Kỷ lục: {{ userStats?.longest_streak || 0 }} ngày
+      </div>
+    </div>
+
+    <!-- Total words card -->
+    <div class="stat-card total-card">
+      <div class="stat-header">
+        <div class="stat-icon">📚</div>
+        <span class="stat-label">Tổng từ vựng</span>
+      </div>
+      <div class="stat-value">{{ srsStats?.total || 0 }}</div>
+      <div class="stat-sub">{{ totalStudied }} đã học qua</div>
+    </div>
+
+    <!-- Mastered card -->
+    <div class="stat-card mastered-card">
+      <div class="stat-header">
+        <div class="stat-icon">🧠</div>
+        <span class="stat-label">Đã thuộc (Mature)</span>
+      </div>
+      <div class="stat-value">{{ srsStats?.status?.mature || 0 }}</div>
+      <div class="mastery-bar-wrap">
+        <div class="mastery-bar-track">
+          <div class="mastery-bar-fill" [style.width.%]="masteryPercent"></div>
+        </div>
+        <span class="mastery-pct">{{ masteryPercent }}% thuần thục</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SRS Status breakdown -->
+  <div class="section-title" *ngIf="!isLoading && srsStats">
+    <h2>Trạng thái thẻ học</h2>
+    <p>Phân phối thẻ theo cấp độ ghi nhớ (SM-2)</p>
+  </div>
+
+  <div class="srs-breakdown" *ngIf="!isLoading && srsStats">
+    <div class="srs-item new">
+      <div class="srs-dot"></div>
+      <div class="srs-info">
+        <span class="srs-name">New</span>
+        <span class="srs-count">{{ srsStats.status.new || 0 }}</span>
+      </div>
+      <div class="srs-bar-track">
+        <div class="srs-bar-fill"
+             [style.width.%]="srsStats.total ? ((srsStats.status.new || 0) / srsStats.total * 100) : 0">
+        </div>
+      </div>
+    </div>
+    <div class="srs-item learning">
+      <div class="srs-dot"></div>
+      <div class="srs-info">
+        <span class="srs-name">Learning</span>
+        <span class="srs-count">{{ srsStats.status.learning || 0 }}</span>
+      </div>
+      <div class="srs-bar-track">
+        <div class="srs-bar-fill"
+             [style.width.%]="srsStats.total ? ((srsStats.status.learning || 0) / srsStats.total * 100) : 0">
+        </div>
+      </div>
+    </div>
+    <div class="srs-item young">
+      <div class="srs-dot"></div>
+      <div class="srs-info">
+        <span class="srs-name">Young</span>
+        <span class="srs-count">{{ srsStats.status.young || 0 }}</span>
+      </div>
+      <div class="srs-bar-track">
+        <div class="srs-bar-fill"
+             [style.width.%]="srsStats.total ? ((srsStats.status.young || 0) / srsStats.total * 100) : 0">
+        </div>
+      </div>
+    </div>
+    <div class="srs-item mature">
+      <div class="srs-dot"></div>
+      <div class="srs-info">
+        <span class="srs-name">Mature</span>
+        <span class="srs-count">{{ srsStats.status.mature || 0 }}</span>
+      </div>
+      <div class="srs-bar-track">
+        <div class="srs-bar-fill"
+             [style.width.%]="srsStats.total ? ((srsStats.status.mature || 0) / srsStats.total * 100) : 0">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="section-title">
+    <h2>Hành động nhanh</h2>
+  </div>
+
+  <div class="quick-actions">
+    <a class="action-card" routerLink="/study/today">
+      <div class="action-icon study">🎯</div>
+      <div class="action-info">
+        <h3>Study Session</h3>
+        <p>Ôn tập với thuật toán SM-2</p>
+      </div>
+      <span class="action-arrow">→</span>
+    </a>
+    <a class="action-card" routerLink="/decks">
+      <div class="action-icon decks">📁</div>
+      <div class="action-info">
+        <h3>Quản lý Decks</h3>
+        <p>Xem và tổ chức bộ thẻ</p>
+      </div>
+      <span class="action-arrow">→</span>
+    </a>
+    <a class="action-card" routerLink="/ai-cards">
+      <div class="action-icon ai">🤖</div>
+      <div class="action-info">
+        <h3>AI Generator</h3>
+        <p>Tạo thẻ tự động với AI</p>
+      </div>
+      <span class="action-arrow">→</span>
+    </a>
+  </div>
+
 </div>

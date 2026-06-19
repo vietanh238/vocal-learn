@@ -1,26 +1,71 @@
-<div class="page-header">
-  <div class="header-content">
-    <h1>My Decks</h1>
-    <p>Manage your vocabulary collections.</p>
+<div class="page-header flex-header">
+  <div>
+    <h1>📚 My Decks</h1>
+    <p>{{ decks.length }} bộ thẻ · Quản lý từ vựng của bạn</p>
   </div>
-  <button class="btn btn-primary" (click)="createDeck()">+ New Deck</button>
+  <button class="btn btn-primary" (click)="createDeck()">
+    + New Deck
+  </button>
 </div>
 
-<div class="decks-grid">
-  <!-- Dynamic Decks -->
-  <div class="deck-card" *ngFor="let deck of decks">
-    <div class="deck-icon">📁</div>
-    <div class="deck-info">
-      <h3>{{ deck.name }}</h3>
-      <p>{{ deck.word_count || 0 }} từ vựng</p>
+<!-- Loading skeleton -->
+<div class="decks-grid" *ngIf="isLoading">
+  <div class="deck-card skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+</div>
+
+<!-- Empty state -->
+<div class="empty-state" *ngIf="!isLoading && decks.length === 0">
+  <span class="empty-icon">📭</span>
+  <h3>Chưa có bộ thẻ nào</h3>
+  <p>Tạo bộ thẻ đầu tiên để bắt đầu hành trình học từ vựng với AI!</p>
+  <button class="btn btn-primary" (click)="createDeck()">+ Tạo Deck đầu tiên</button>
+</div>
+
+<!-- Decks Grid -->
+<div class="decks-grid" *ngIf="!isLoading && decks.length > 0">
+  <div class="deck-card"
+       *ngFor="let deck of decks; let i = index"
+       [style.--deck-color]="getDeckColor(i)"
+       [style.animation-delay]="(i * 0.06) + 's'">
+
+    <div class="deck-color-stripe" [style.background]="getDeckColor(i)"></div>
+
+    <div class="deck-header">
+      <div class="deck-icon" [style.background]="getDeckColor(i)">
+        {{ getDeckIcon(i) }}
+      </div>
+      <div class="deck-meta">
+        <h3>{{ deck.name }}</h3>
+        <p *ngIf="deck.description">{{ deck.description }}</p>
+      </div>
     </div>
+
+    <div class="deck-stats">
+      <div class="deck-word-count">
+        <span class="count">{{ deck.word_count || 0 }}</span>
+        <span class="label">từ vựng</span>
+      </div>
+      <div class="deck-date" *ngIf="deck.created_at">
+        {{ deck.created_at | date:'dd/MM/yy' }}
+      </div>
+    </div>
+
     <div class="deck-actions">
-      <button class="btn btn-secondary btn-sm" [routerLink]="['/study', 'deck-' + deck.id]">Study</button>
-      <button class="btn btn-danger btn-sm" (click)="deleteDeck(deck.id)">Delete</button>
+      <button class="btn-action study" [routerLink]="['/study', 'deck-' + deck.id]">
+        🎯 Study
+      </button>
+      <button class="btn-action ai" [routerLink]="['/ai-cards']">
+        🤖 Add
+      </button>
+      <button class="btn-action delete" (click)="deleteDeck(deck.id, $event)">
+        🗑️
+      </button>
     </div>
   </div>
-  
-  <div class="no-decks-message" *ngIf="decks.length === 0">
-    <p>Bạn chưa có bộ thẻ nào. Hãy nhấp nút "+ New Deck" ở trên để bắt đầu!</p>
+
+  <!-- Add new card -->
+  <div class="deck-card add-card" (click)="createDeck()">
+    <div class="add-icon">+</div>
+    <p>Tạo Deck mới</p>
   </div>
 </div>

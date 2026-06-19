@@ -1,45 +1,98 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <div class="auth-header">
-      <h2>Welcome Back 👋</h2>
-      <p>Log in to continue your English learning journey.</p>
+<div class="auth-bg">
+  <!-- Animated gradient orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="auth-container">
+
+    <!-- Left brand panel -->
+    <div class="brand-panel">
+      <div class="brand-logo">
+        <span class="brand-icon">🧠</span>
+        <div>
+          <h1 class="brand-name">VocaLearn</h1>
+          <p class="brand-tagline">Science-based vocabulary learning</p>
+        </div>
+      </div>
+
+      <div class="brand-features">
+        <div class="feature-item">
+          <span class="feat-icon">📈</span>
+          <div>
+            <h3>SM-2 Algorithm</h3>
+            <p>Spaced repetition tối ưu quá trình ghi nhớ dài hạn</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">🤖</span>
+          <div>
+            <h3>AI Card Generator</h3>
+            <p>Tự động tạo thẻ học với ChatGPT & Gemini</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">🧠</span>
+          <div>
+            <h3>Feynman Technique</h3>
+            <p>Ghi chú lại bằng ngôn ngữ của chính bạn</p>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="auth-form">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input 
-          type="text" 
-          id="username" 
-          name="username" 
-          [(ngModel)]="username" 
-          required 
-          placeholder="Enter your username">
+
+    <!-- Login card -->
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>Chào mừng trở lại! 👋</h2>
+        <p>Đăng nhập để tiếp tục hành trình học từ vựng.</p>
       </div>
-      
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password" 
-          [(ngModel)]="password" 
-          required 
-          placeholder="Enter your password">
-      </div>
-      
-      <div class="error-message" *ngIf="errorMsg">
-        {{ errorMsg }}
-      </div>
-      
-      <button type="submit" class="btn btn-primary btn-full" [disabled]="!loginForm.form.valid || isLoading">
-        <span *ngIf="!isLoading">Log In</span>
-        <span *ngIf="isLoading" class="spinner"></span>
-      </button>
-      
-      <div class="auth-footer">
-        <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
-      </div>
-    </form>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="auth-form">
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              [(ngModel)]="username"
+              required
+              placeholder="Nhập tên đăng nhập">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔑</span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              [(ngModel)]="password"
+              required
+              placeholder="Nhập mật khẩu">
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="errorMsg">
+          ⚠️ {{ errorMsg }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" [disabled]="!loginForm.form.valid || isLoading">
+          <span *ngIf="!isLoading">🚀 Đăng nhập</span>
+          <span *ngIf="isLoading" class="loading-dots">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+
+        <div class="auth-footer">
+          <p>Chưa có tài khoản? <a routerLink="/register">Đăng ký ngay</a></p>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>

@@ -1,0 +1,277 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// ─── Background ────────────────────────────────────────────────────
+.auth-bg {
+  min-height: 100vh;
+  background: $bg-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  position: relative;
+  overflow: hidden;
+
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(96, 165, 250, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 80%, rgba(45, 212, 191, 0.04) 0%, transparent 55%);
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.35;
+  animation: float 8s ease-in-out infinite;
+
+  &.orb-1 {
+    width: 400px; height: 400px;
+    background: rgba($accent-blue, 0.15);
+    top: -100px; left: -100px;
+    animation-delay: 0s;
+  }
+  &.orb-2 {
+    width: 350px; height: 350px;
+    background: rgba($accent-purple, 0.12);
+    bottom: -80px; right: -80px;
+    animation-delay: -3s;
+  }
+  &.orb-3 {
+    width: 280px; height: 280px;
+    background: rgba($accent-teal, 0.1);
+    top: 50%; right: 30%;
+    animation-delay: -6s;
+  }
+}
+
+// ─── Container ────────────────────────────────────────────────────
+.auth-container {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: $spacing-2xl;
+  max-width: 900px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    .brand-panel { display: none; }
+  }
+}
+
+// ─── Brand Panel ────────────────────────────────────────────────
+.brand-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: $spacing-2xl;
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    .brand-icon {
+      font-size: 3rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 20px rgba($accent-blue, 0.5));
+    }
+
+    .brand-name {
+      font-size: 2.5rem;
+      font-weight: 900;
+      @include text-gradient($text-primary, $accent-blue);
+      line-height: 1;
+    }
+
+    .brand-tagline {
+      font-size: $font-size-xs;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+    }
+  }
+
+  .brand-features {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-radius: $radius-md;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid $border-color;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba($accent-blue, 0.2);
+      transform: translateX(4px);
+    }
+
+    .feat-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    h3 {
+      font-size: $font-size-sm;
+      font-weight: 700;
+      color: $text-primary;
+      margin-bottom: 2px;
+    }
+
+    p {
+      font-size: $font-size-xs;
+      color: $text-muted;
+      line-height: 1.5;
+    }
+  }
+}
+
+// ─── Auth Card ──────────────────────────────────────────────────
+.auth-card {
+  @include glass-panel-vivid;
+  border-radius: $radius-xl;
+  padding: $spacing-2xl;
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+
+  .auth-header {
+    margin-bottom: $spacing-xl;
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: $text-primary;
+      margin-bottom: $spacing-xs;
+    }
+    p {
+      color: $text-secondary;
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+// ─── Form ─────────────────────────────────────────────────────
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.input-wrap {
+  position: relative;
+
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md $spacing-sm 42px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: $radius-md;
+    color: $text-primary;
+    font-size: $font-size-base;
+    transition: all $transition-fast;
+
+    &:focus {
+      border-color: rgba($accent-blue, 0.5);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 3px rgba($accent-blue, 0.12);
+    }
+  }
+}
+
+.error-message {
+  background: rgba($accent-red, 0.08);
+  border: 1px solid rgba($accent-red, 0.2);
+  color: $accent-red;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  animation: fadeInDown 0.3s ease-out;
+}
+
+.btn-full {
+  width: 100%;
+  padding: $spacing-md $spacing-lg;
+  justify-content: center;
+  font-size: $font-size-base;
+  border-radius: $radius-md;
+  margin-top: $spacing-xs;
+}
+
+// Loading dots animation
+.loading-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  span {
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation: loadingBounce 1.2s ease-in-out infinite;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes loadingBounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+  40%           { transform: scale(1); opacity: 1; }
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: $spacing-sm;
+
+  p {
+    color: $text-muted;
+    font-size: $font-size-sm;
+
+    a {
+      color: $accent-blue;
+      font-weight: 600;
+      &:hover { text-decoration: underline; }
+    }
+  }
+}

@@ -2,262 +2,483 @@
 @use '../../../../styles/mixins' as *;
 
 .study-session-container {
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: $spacing-xl 0;
+  padding: $spacing-lg 0 $spacing-2xl;
+  animation: fadeIn 0.3s ease-out;
 }
 
+// ─── Loading ─────────────────────────────────────────────────────────
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: 6rem 0;
+  color: $text-muted;
+  font-size: $font-size-sm;
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(255,255,255,0.08);
+    border-top-color: $accent-blue;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+// ─── Session Header ───────────────────────────────────────────────────
 .session-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: $spacing-md;
   margin-bottom: $spacing-xl;
+  flex-wrap: wrap;
 
-  .progress-info {
+  .back-btn { flex-shrink: 0; }
+
+  .session-progress {
+    flex: 1;
+    min-width: 160px;
     display: flex;
-    gap: $spacing-sm;
+    flex-direction: column;
+    gap: 4px;
+
+    .progress-track {
+      height: 6px;
+      background: rgba(255,255,255,0.07);
+      border-radius: $radius-full;
+      overflow: hidden;
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, $accent-blue, $accent-purple);
+        border-radius: $radius-full;
+        transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: progressGrow 0.5s ease-out;
+
+        &.complete { background: linear-gradient(90deg, $accent-green, $accent-teal); }
+      }
+    }
+
+    .progress-text {
+      font-size: $font-size-xs;
+      color: $text-muted;
+      font-weight: 600;
+    }
+  }
+
+  .session-badges {
+    display: flex;
+    gap: $spacing-xs;
+    flex-wrap: wrap;
 
     .badge {
-      padding: $spacing-xs $spacing-sm;
+      padding: 3px 10px;
       border-radius: $radius-full;
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: $font-size-xs;
+      font-weight: 700;
 
-      &.new { background: rgba($accent-blue, 0.1); color: $accent-blue; }
-      &.learning { background: rgba($accent-orange, 0.1); color: $accent-orange; }
-      &.review { background: rgba($accent-green, 0.1); color: $accent-green; }
+      &.badge-new  { background: rgba($srs-new, 0.12); color: $srs-new; }
+      &.badge-learn { background: rgba($srs-learning, 0.12); color: $srs-learning; }
+      &.badge-review { background: rgba($accent-blue, 0.1); color: $accent-blue; }
+      &.badge-acc  { background: rgba($accent-green, 0.1); color: $accent-green; }
     }
   }
 }
 
+// ─── Flashcard Area ───────────────────────────────────────────────────
 .flashcard-area {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-xl;
-  perspective: 1000px; /* IMPORTANT for 3D flip effect */
+  gap: $spacing-lg;
 }
 
+// Card type strip
+.card-type-strip {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-xs;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: $radius-full;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+
+  &.type-new     { color: $srs-new; background: rgba($srs-new, 0.1); border-color: rgba($srs-new, 0.2); }
+  &.type-learning { color: $srs-learning; background: rgba($srs-learning, 0.1); border-color: rgba($srs-learning, 0.2); }
+  &.type-young   { color: $srs-young; background: rgba($srs-young, 0.1); border-color: rgba($srs-young, 0.2); }
+  &.type-mature  { color: $srs-mature; background: rgba($srs-mature, 0.1); border-color: rgba($srs-mature, 0.2); }
+  &.type-relearn { color: $accent-red; background: rgba($accent-red, 0.1); border-color: rgba($accent-red, 0.2); }
+
+  .deck-name { color: $text-muted; font-weight: 500; text-transform: none; }
+}
+
+// ─── 3D Flashcard ─────────────────────────────────────────────────────
 .flashcard {
   width: 100%;
-  max-width: 600px;
-  height: 400px;
-  background-color: transparent;
+  height: 380px;
+  perspective: 1200px;
   cursor: pointer;
 
   .flashcard-inner {
     position: relative;
     width: 100%;
     height: 100%;
-    text-align: center;
-    transition: transform 0.6s;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
   }
 
-  &.flipped .flashcard-inner {
-    transform: rotateY(180deg);
-  }
+  &.flipped .flashcard-inner { transform: rotateY(180deg); }
 
   .flashcard-front, .flashcard-back {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     @include glass-panel;
+    border-radius: $radius-xl;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+  }
+
+  // Front
+  .flashcard-front {
     justify-content: center;
     align-items: center;
-    padding: $spacing-xl;
-    border-radius: $radius-xl;
-  }
+    padding: $spacing-2xl;
+    background: linear-gradient(145deg, rgba(30,32,51,0.9), rgba(20,22,40,0.95));
+    border: 1px solid rgba($accent-blue, 0.1);
 
-  .flashcard-front {
-    h2 {
-      font-size: 3rem;
-      color: $text-primary;
-      margin-bottom: $spacing-sm;
+    .front-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-sm;
+      flex: 1;
+      justify-content: center;
+
+      .word-display {
+        text-align: center;
+        h2 {
+          font-size: 3.2rem;
+          font-weight: 900;
+          letter-spacing: -1px;
+          @include text-gradient($text-primary, rgba($accent-blue, 0.9));
+          margin-bottom: 4px;
+        }
+        .ipa {
+          font-size: 1.2rem;
+          color: $text-secondary;
+          font-style: italic;
+        }
+      }
+
+      .pos-badge {
+        background: $bg-tertiary;
+        color: $text-muted;
+        padding: 4px 14px;
+        border-radius: $radius-full;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid $border-color;
+      }
     }
-    .ipa {
-      font-size: 1.2rem;
-      color: $text-secondary;
-      font-style: italic;
-      margin-bottom: $spacing-md;
-    }
-    .pos-badge {
-      background: $bg-tertiary;
-      color: $text-secondary;
-      padding: 4px 12px;
-      border-radius: $radius-full;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+
     .click-hint {
-      position: absolute;
-      bottom: $spacing-xl;
       color: $text-muted;
-      animation: pulse 2s infinite;
+      font-size: $font-size-xs;
+      animation: pulse 2.5s ease-in-out infinite;
+      padding-bottom: $spacing-sm;
     }
   }
 
+  // Back
   .flashcard-back {
     transform: rotateY(180deg);
-    align-items: stretch;
-    text-align: left;
-    
-    h3 {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: $text-muted;
-      margin-bottom: $spacing-xs;
+    background: linear-gradient(145deg, rgba(30,32,51,0.95), rgba(22,24,44,0.98));
+
+    .back-scroll {
+      padding: $spacing-lg $spacing-xl;
+      overflow-y: auto;
+      flex: 1;
+      @include scrollbar-dark;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
     }
-    
-    p {
-      font-size: 1.2rem;
-      margin-bottom: $spacing-lg;
-    }
-    
-    .definition-vi p {
+  }
+}
+
+.back-section {
+  .section-label {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: $text-muted;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: $text-primary;
+  }
+
+  &.vi-section {
+    .definition-vi {
       color: $accent-blue;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+  }
+
+  .example-sentence {
+    color: $text-secondary;
+    font-style: italic;
+    font-size: 0.95rem;
+  }
+
+  .collocations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-top: 4px;
+
+    .collocation-chip {
+      background: rgba($accent-teal, 0.1);
+      color: $accent-teal;
+      border: 1px solid rgba($accent-teal, 0.2);
+      padding: 2px 10px;
+      border-radius: $radius-full;
+      font-size: $font-size-xs;
       font-weight: 600;
     }
   }
 }
 
+// ─── Review Actions ───────────────────────────────────────────────────
 .review-actions {
   width: 100%;
-  max-width: 600px;
-  text-align: center;
-  animation: fadeInUp 0.5s ease;
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
-  .question {
+  .rating-question {
+    text-align: center;
     color: $text-secondary;
+    font-size: $font-size-sm;
     margin-bottom: $spacing-md;
-    font-size: 1.1rem;
-  }
-
-  .buttons-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: $spacing-sm;
-
-    .btn {
-      padding: $spacing-md;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      
-      span {
-        font-size: 0.8rem;
-        opacity: 0.8;
-      }
-      
-      &.btn-again { background: rgba(#ef4444, 0.1); color: #ef4444; border: 1px solid rgba(#ef4444, 0.2); }
-      &.btn-again:hover { background: rgba(#ef4444, 0.2); }
-      
-      &.btn-hard { background: rgba(#f97316, 0.1); color: #f97316; border: 1px solid rgba(#f97316, 0.2); }
-      &.btn-hard:hover { background: rgba(#f97316, 0.2); }
-      
-      &.btn-good { background: rgba(#3b82f6, 0.1); color: #3b82f6; border: 1px solid rgba(#3b82f6, 0.2); }
-      &.btn-good:hover { background: rgba(#3b82f6, 0.2); }
-      
-      &.btn-easy { background: rgba(#10b981, 0.1); color: #10b981; border: 1px solid rgba(#10b981, 0.2); }
-      &.btn-easy:hover { background: rgba(#10b981, 0.2); }
-    }
+    font-weight: 500;
   }
 }
 
+// Feynman section
 .feynman-section {
   @include glass-panel;
-  margin-bottom: $spacing-lg;
-  padding: $spacing-md;
+  padding: $spacing-md $spacing-lg;
   border-radius: $radius-md;
-  text-align: left;
+  margin-bottom: $spacing-lg;
+  border-color: rgba($accent-purple, 0.15);
 
-  h3 {
-    font-size: 0.95rem;
-    color: $accent-purple;
-    margin-bottom: $spacing-xs;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .feynman-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+
+    .feynman-title {
+      font-size: $font-size-xs;
+      font-weight: 700;
+      color: $accent-purple;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .feynman-saved {
+      font-size: $font-size-xs;
+      color: $accent-green;
+      font-weight: 600;
+      animation: fadeIn 0.3s;
+    }
   }
 
-  .section-desc {
-    font-size: 0.85rem;
-    color: $text-secondary;
+  .feynman-desc {
+    font-size: $font-size-xs;
+    color: $text-muted;
     margin-bottom: $spacing-sm;
   }
 
   .feynman-input-group {
     display: flex;
-    flex-direction: column;
     gap: $spacing-sm;
 
     textarea {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.2);
+      flex: 1;
+      resize: none;
+      background: rgba(0,0,0,0.25);
       border: 1px solid $border-color;
       border-radius: $radius-sm;
       color: $text-primary;
       padding: $spacing-sm;
-      font-family: $font-primary;
       font-size: 0.9rem;
-      resize: none;
-
+      font-family: $font-primary;
       &:focus {
-        border-color: $accent-blue;
-        background: rgba(0, 0, 0, 0.35);
+        border-color: rgba($accent-purple, 0.5);
+        box-shadow: 0 0 0 3px rgba($accent-purple, 0.08);
       }
     }
 
-    button {
-      align-self: flex-end;
-      font-size: 0.8rem;
-      padding: 6px 12px;
-      background: rgba($accent-blue, 0.15);
-      border: 1px solid rgba($accent-blue, 0.3);
-      color: $accent-blue;
+    .feynman-save-btn {
+      padding: $spacing-sm $spacing-md;
+      background: rgba($accent-purple, 0.12);
+      border: 1px solid rgba($accent-purple, 0.25);
+      color: $accent-purple;
       border-radius: $radius-md;
+      font-size: $font-size-xs;
+      font-weight: 700;
       cursor: pointer;
-      font-weight: 600;
+      font-family: $font-primary;
       transition: all $transition-fast;
+      white-space: nowrap;
 
       &:hover:not(:disabled) {
-        background: rgba($accent-blue, 0.25);
+        background: rgba($accent-purple, 0.22);
         transform: translateY(-1px);
       }
-      
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+      &:disabled { opacity: 0.4; cursor: not-allowed; }
     }
   }
 }
 
-.buttons-grid.leitner-grid {
-  grid-template-columns: repeat(2, 1fr) !important;
+// ─── Rating Buttons ────────────────────────────────────────────────────
+.rating-grid {
+  display: grid;
+  gap: $spacing-sm;
+
+  &.sm2-grid    { grid-template-columns: repeat(4, 1fr); }
+  &.leitner-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-.done-message {
+.rating-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: $spacing-md $spacing-sm;
+  border-radius: $radius-md;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: $font-primary;
+  transition: all $transition-fast;
+
+  &:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+  &:not(:disabled):active { transform: translateY(0); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-emoji { font-size: 1.5rem; line-height: 1; }
+  .btn-label { font-size: $font-size-sm; font-weight: 700; }
+  .btn-sub   { font-size: $font-size-xs; opacity: 0.7; }
+
+  &.again {
+    background: rgba(#ef4444, 0.1);
+    color: #ef4444;
+    border-color: rgba(#ef4444, 0.2);
+    &:hover { background: rgba(#ef4444, 0.18); }
+  }
+  &.hard {
+    background: rgba(#f97316, 0.1);
+    color: #f97316;
+    border-color: rgba(#f97316, 0.2);
+    &:hover { background: rgba(#f97316, 0.18); }
+  }
+  &.good {
+    background: rgba(#3b82f6, 0.1);
+    color: #3b82f6;
+    border-color: rgba(#3b82f6, 0.2);
+    &:hover { background: rgba(#3b82f6, 0.18); }
+  }
+  &.easy {
+    background: rgba(#10b981, 0.1);
+    color: #10b981;
+    border-color: rgba(#10b981, 0.2);
+    &:hover { background: rgba(#10b981, 0.18); }
+  }
+}
+
+// ─── Done Screen ──────────────────────────────────────────────────────
+.done-screen {
   @include glass-panel;
-  padding: 4rem 2rem;
+  border-radius: $radius-xl;
+  padding: 4rem $spacing-2xl;
   text-align: center;
-  max-width: 500px;
-  margin: 0 auto;
-  
+  border-color: rgba($accent-green, 0.12);
+  animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  .done-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: $spacing-lg;
+    animation: float 3s ease-in-out infinite;
+  }
+
   h2 {
     font-size: 2rem;
-    margin-bottom: $spacing-md;
-    color: $text-primary;
+    font-weight: 800;
+    @include text-gradient($accent-green, $accent-teal);
+    margin-bottom: $spacing-sm;
   }
-  
+
   p {
     color: $text-secondary;
+    font-size: $font-size-sm;
     margin-bottom: $spacing-xl;
+  }
+
+  .done-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-xl;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    padding: $spacing-lg $spacing-2xl;
+    margin-bottom: $spacing-xl;
+
+    .done-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .done-val {
+        font-size: 2rem;
+        font-weight: 900;
+        color: $text-primary;
+      }
+      .done-lbl {
+        font-size: $font-size-xs;
+        color: $text-muted;
+        margin-top: 2px;
+      }
+    }
+
+    .done-divider {
+      width: 1px;
+      height: 40px;
+      background: $border-color;
+    }
+  }
+
+  .done-actions {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: center;
   }
 }

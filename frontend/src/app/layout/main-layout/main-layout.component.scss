@@ -2,70 +2,91 @@
 @use '../../../styles/mixins' as *;
 
 .top-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   margin-bottom: $spacing-xl;
   padding-bottom: $spacing-md;
   border-bottom: 1px solid $border-color;
 
   .search-bar {
     position: relative;
-    width: 300px;
+    width: 280px;
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      opacity: 0.4;
+      pointer-events: none;
+    }
 
     input {
       width: 100%;
-      padding: $spacing-sm $spacing-md;
-      padding-left: 2.5rem;
+      padding: 8px 14px 8px 36px;
       border-radius: $radius-full;
-      background: $bg-input;
+      background: rgba(255,255,255,0.04);
       border: 1px solid $border-color;
       color: $text-primary;
       font-size: $font-size-sm;
       transition: all $transition-fast;
 
       &:focus {
-        border-color: $accent-blue;
-        box-shadow: 0 0 10px rgba($accent-blue, 0.1);
+        border-color: rgba($accent-blue, 0.4);
+        background: rgba(255,255,255,0.06);
+        box-shadow: 0 0 0 3px rgba($accent-blue, 0.08);
       }
-    }
-
-    &::before {
-      content: '🔍';
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.9rem;
-      opacity: 0.5;
     }
   }
 
   .user-profile {
     display: flex;
     align-items: center;
-    gap: $spacing-lg;
+    gap: $spacing-md;
 
-    span {
-      font-size: $font-size-sm;
-      color: $text-secondary;
-      font-weight: 500;
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .user-name {
+        font-size: $font-size-sm;
+        font-weight: 600;
+        color: $text-primary;
+      }
+      .user-role {
+        font-size: $font-size-xs;
+        color: $text-muted;
+      }
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $accent-blue, $accent-purple);
+      @include flex-center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
     }
 
     .logout-btn {
-      background: rgba($accent-red, 0.1);
+      background: rgba($accent-red, 0.08);
       color: $accent-red;
-      border: 1px solid rgba($accent-red, 0.2);
+      border: 1px solid rgba($accent-red, 0.15);
       padding: 6px 14px;
       border-radius: $radius-md;
       font-size: $font-size-xs;
       font-weight: 600;
       cursor: pointer;
       transition: all $transition-fast;
+      font-family: $font-primary;
 
       &:hover {
-        background: rgba($accent-red, 0.2);
-        border-color: rgba($accent-red, 0.4);
+        background: rgba($accent-red, 0.16);
+        border-color: rgba($accent-red, 0.3);
         transform: translateY(-1px);
       }
     }
@@ -73,5 +94,5 @@
 }
 
 .content-area {
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeInUp 0.3s ease-out;
 }

@@ -19,150 +19,148 @@ export class StudySessionComponent implements OnInit {
   isFlipped = false;
   dueCards: CardReview[] = [];
   currentIndex = 0;
-  
-  // Settings loaded from LocalStorage
+  isLoading = true;
+  isSubmitting = false;
+
+  // Feynman
   feynmanEnabled = true;
   srsAlgorithm = 'sm2';
-  
-  // Local state for Feynman input
   userExplanation = '';
   isSavingExplanation = false;
+  feynmanSaved = false;
 
-  stats = {
-    new: 0,
-    learning: 0,
-    due: 0
-  };
+  // Session stats
+  sessionCorrect = 0;
+  sessionTotal = 0;
+  lastRating: string | null = null;
+
+  stats = { new: 0, learning: 0, due: 0 };
 
   ngOnInit() {
-    // Load local settings
     this.feynmanEnabled = localStorage.getItem('feynman_enabled') !== 'false';
-    this.srsAlgorithm = localStorage.getItem('srs_algorithm') || 'sm2';
+    this.srsAlgorithm  = localStorage.getItem('srs_algorithm') || 'sm2';
 
-    // Parse route parameter
     this.route.paramMap.subscribe(params => {
       const mode = params.get('mode') || 'today';
-      let deckIds: number[] | undefined = undefined;
+      let deckIds: number[] | undefined;
 
       if (mode.startsWith('deck-')) {
-        const deckId = Number(mode.split('-')[1]);
-        if (!isNaN(deckId)) {
-          deckIds = [deckId];
-        }
+        const id = Number(mode.split('-')[1]);
+        if (!isNaN(id)) deckIds = [id];
       }
-
       this.loadDueCards(deckIds);
     });
   }
 
   loadDueCards(deckIds?: number[]) {
+    this.isLoading = true;
     this.apiService.getDueCards(deckIds).subscribe({
       next: (res) => {
         this.dueCards = res.cards;
         this.currentIndex = 0;
+        this.isLoading = false;
         this.updateStats();
       },
-      error: (err) => {
-        console.error('Failed to load due cards:', err);
-      }
+      error: () => { this.isLoading = false; }
     });
   }
 
   updateStats() {
     this.stats.due = this.dueCards.length - this.currentIndex;
-    
-    // Count stats for remaining cards
-    let newCount = 0;
-    let learningCount = 0;
-    
+    let newCount = 0, learningCount = 0;
     for (let i = this.currentIndex; i < this.dueCards.length; i++) {
-      const status = this.dueCards[i].status;
-      if (status === 'new') {
-        newCount++;
-      } else if (status === 'learning' || status === 'relearn') {
-        learningCount++;
-      }
+      const s = this.dueCards[i].status;
+      if (s === 'new') newCount++;
+      else if (s === 'learning' || s === 'relearn') learningCount++;
     }
-    
     this.stats.new = newCount;
     this.stats.learning = learningCount;
   }
 
-  get currentCard() {
-    if (this.currentIndex >= 0 && this.currentIndex < this.dueCards.length) {
-      return this.dueCards[this.currentIndex];
-    }
-    return null;
+  get currentCard(): CardReview | null {
+    return (this.currentIndex >= 0 && this.currentIndex < this.dueCards.length)
+      ? this.dueCards[this.currentIndex]
+      : null;
+  }
+
+  get progressPercent(): number {
+    if (this.dueCards.length === 0) return 100;
+    return Math.round((this.currentIndex / this.dueCards.length) * 100);
+  }
+
+  get accuracyPercent(): number {
+    if (this.sessionTotal === 0) return 0;
+    return Math.round((this.sessionCorrect / this.sessionTotal) * 100);
   }
 
   flipCard() {
     if (!this.isFlipped) {
       this.isFlipped = true;
-      // Pre-fill feynman explanation from current card
+      this.feynmanSaved = false;
       const card = this.currentCard;
-      if (card) {
-        this.userExplanation = card.word_user_explanation || '';
-      }
+      if (card) this.userExplanation = card.word_user_explanation || '';
     }
   }
 
   saveFeynmanExplanation() {
     const card = this.currentCard;
-    if (!card) return;
+    if (!card || !this.userExplanation.trim()) return;
 
     this.isSavingExplanation = true;
-    this.apiService.updateWord(card.word, { user_explanation: this.userExplanation }).subscribe({
+    this.apiService.patchWord(card.word, { user_explanation: this.userExplanation }).subscribe({
       next: (updatedWord) => {
         card.word_user_explanation = updatedWord.user_explanation;
         this.isSavingExplanation = false;
-        alert('Đã lưu lời giải thích của bạn!');
+        this.feynmanSaved = true;
       },
-      error: (err) => {
-        console.error('Failed to save explanation:', err);
-        this.isSavingExplanation = false;
-      }
+      error: () => { this.isSavingExplanation = false; }
     });
   }
 
   submitReview(quality: number) {
     const card = this.currentCard;
-    if (!card) return;
+    if (!card || this.isSubmitting) return;
 
-    // Depending on the algorithm selected in settings:
-    let payload: any = {
-      word_id: card.word,
-      algorithm: this.srsAlgorithm
-    };
+    this.isSubmitting = true;
+    this.sessionTotal++;
+
+    let payload: any = { word_id: card.word, algorithm: this.srsAlgorithm };
 
     if (this.srsAlgorithm === 'sm2') {
-      payload.quality = quality; // 1, 2, 4, 5
+      payload.quality = quality;
+      this.lastRating = quality >= 4 ? 'good' : quality >= 3 ? 'hard' : 'again';
+      if (quality >= 3) this.sessionCorrect++;
     } else {
-      // Leitner system: Q >= 3 is correct (true), Q < 3 is incorrect (false)
       payload.correct = quality >= 3;
+      this.lastRating = quality >= 3 ? 'good' : 'again';
+      if (quality >= 3) this.sessionCorrect++;
     }
 
     this.apiService.submitReview(payload).subscribe({
-      next: (res) => {
-        console.log('Review submitted successfully:', res);
+      next: () => {
         window.dispatchEvent(new Event('statsUpdated'));
-        this.proceedToNext();
+        setTimeout(() => this.proceedToNext(), 300);
       },
-      error: (err) => {
-        console.error('Failed to submit review:', err);
-        // Fallback: still proceed to next card in UI
-        this.proceedToNext();
-      }
+      error: () => { setTimeout(() => this.proceedToNext(), 300); }
     });
   }
 
   private proceedToNext() {
     this.isFlipped = false;
     this.userExplanation = '';
-    
-    // Slight delay for flip animation reset
+    this.feynmanSaved = false;
+    this.isSubmitting = false;
+    this.lastRating = null;
+
     setTimeout(() => {
       this.currentIndex++;
       this.updateStats();
-    }, 150);
+    }, 180);
+  }
+
+  getRatingLabel(quality: number): string {
+    if (this.srsAlgorithm === 'leitner') return quality >= 3 ? 'Correct ✓' : 'Incorrect ✗';
+    const labels: Record<number, string> = { 1: 'Again', 2: 'Hard', 4: 'Good', 5: 'Easy' };
+    return labels[quality] || '';
   }
 }

@@ -1,62 +1,198 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-.page-header {
-  margin-bottom: $spacing-xl;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h1 { font-size: 2rem; color: $text-primary; }
-  p { color: $text-secondary; }
-}
-
 .decks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: $spacing-xl;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $spacing-lg;
 }
 
+// Skeleton
+.skeleton-card {
+  height: 200px;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.5s infinite;
+  border-radius: $radius-lg;
+}
+
+// Deck card
 .deck-card {
   @include glass-panel;
-  padding: $spacing-lg;
+  @include shine-effect;
   border-radius: $radius-lg;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
-  transition: transform 0.2s, box-shadow 0.2s;
-  
+  gap: 0;
+  position: relative;
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+  animation: fadeInUp 0.5s ease-out both;
+  cursor: default;
+
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    border-color: rgba(255,255,255,0.1);
   }
 
-  .deck-icon {
-    font-size: 2.5rem;
+  .deck-color-stripe {
+    height: 3px;
+    opacity: 0.8;
   }
 
-  .deck-info {
-    flex: 1;
+  .deck-header {
+    display: flex;
+    gap: $spacing-md;
+    align-items: flex-start;
+    padding: $spacing-lg $spacing-lg $spacing-sm;
 
-    h3 { color: $text-primary; margin-bottom: 4px; font-size: 1.2rem; }
-    p { color: $text-secondary; font-size: 0.9rem; }
+    .deck-icon {
+      font-size: 1.5rem;
+      width: 48px;
+      height: 48px;
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .deck-meta {
+      flex: 1;
+      min-width: 0;
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $text-primary;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+      p {
+        font-size: $font-size-xs;
+        color: $text-muted;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .deck-stats {
+    padding: 0 $spacing-lg $spacing-sm;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    .deck-word-count {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      .count {
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: $text-primary;
+        line-height: 1;
+      }
+      .label {
+        font-size: $font-size-xs;
+        color: $text-muted;
+      }
+    }
+
+    .deck-date {
+      font-size: $font-size-xs;
+      color: $text-muted;
+    }
   }
 
   .deck-actions {
+    padding: $spacing-sm $spacing-lg $spacing-md;
     display: flex;
     gap: $spacing-sm;
     margin-top: auto;
+    border-top: 1px solid $border-color;
+
+    .btn-action {
+      flex: 1;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $radius-md;
+      font-size: $font-size-xs;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all $transition-fast;
+      border: 1px solid transparent;
+      font-family: $font-primary;
+
+      &.study {
+        background: rgba($accent-blue, 0.1);
+        color: $accent-blue;
+        border-color: rgba($accent-blue, 0.2);
+        &:hover { background: rgba($accent-blue, 0.2); transform: translateY(-1px); }
+      }
+      &.ai {
+        background: rgba($accent-purple, 0.1);
+        color: $accent-purple;
+        border-color: rgba($accent-purple, 0.2);
+        &:hover { background: rgba($accent-purple, 0.2); transform: translateY(-1px); }
+      }
+      &.delete {
+        flex: 0;
+        padding: $spacing-xs $spacing-sm;
+        background: rgba($accent-red, 0.08);
+        color: $accent-red;
+        border-color: rgba($accent-red, 0.15);
+        &:hover { background: rgba($accent-red, 0.18); transform: translateY(-1px); }
+      }
+    }
   }
 }
 
-.btn-danger {
-  background: rgba(#ef4444, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(#ef4444, 0.2);
-  padding: $spacing-xs $spacing-sm;
-  font-size: 0.9rem;
-  
+// Add new card
+.add-card {
+  border: 2px dashed rgba(255,255,255,0.08);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  min-height: 200px;
+  cursor: pointer;
+  transition: all $transition-base;
+
   &:hover {
-    background: rgba(#ef4444, 0.2);
+    border-color: rgba($accent-blue, 0.3);
+    background: rgba($accent-blue, 0.04);
+    transform: translateY(-4px);
+
+    .add-icon { color: $accent-blue; border-color: rgba($accent-blue, 0.3); }
+    p { color: $accent-blue; }
+  }
+
+  .add-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: $text-muted;
+    transition: all $transition-base;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    transition: color $transition-fast;
   }
 }

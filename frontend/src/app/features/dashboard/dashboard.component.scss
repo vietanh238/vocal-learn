@@ -1,0 +1,413 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.dashboard-container {
+  max-width: 1100px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+// ─── Hero ───────────────────────────────────────────────────────────
+.dashboard-hero {
+  @include glass-panel-vivid;
+  @include shine-effect;
+  padding: $spacing-xl $spacing-2xl;
+  margin-bottom: $spacing-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: $radius-xl;
+  background: linear-gradient(135deg,
+    rgba(30, 32, 51, 0.9) 0%,
+    rgba(20, 22, 40, 0.95) 100%
+  );
+  border: 1px solid rgba($accent-blue, 0.12);
+
+  .hero-text {
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      @include text-gradient($text-primary, $accent-blue);
+      margin-bottom: 4px;
+    }
+    p { color: $text-secondary; font-size: $font-size-sm; }
+  }
+
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+  }
+
+  .due-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba($accent-orange, 0.1);
+    border: 1px solid rgba($accent-orange, 0.2);
+    border-radius: $radius-lg;
+    padding: $spacing-sm $spacing-lg;
+
+    &.no-due {
+      background: rgba($accent-green, 0.1);
+      border-color: rgba($accent-green, 0.2);
+      .due-count { color: $accent-green; }
+    }
+
+    .due-count {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: $accent-orange;
+      line-height: 1;
+    }
+    .due-label {
+      font-size: $font-size-xs;
+      color: $text-muted;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .btn-study {
+    font-size: $font-size-base;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $radius-lg;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .all-done {
+    color: $accent-green;
+    font-weight: 600;
+    font-size: $font-size-sm;
+    background: rgba($accent-green, 0.1);
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    border: 1px solid rgba($accent-green, 0.2);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba($accent-blue, 0.3); }
+  50%       { box-shadow: 0 0 24px rgba($accent-blue, 0.6); }
+}
+
+// ─── Stats Grid ─────────────────────────────────────────────────────
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-lg;
+  margin-bottom: $spacing-2xl;
+
+  @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px)  { grid-template-columns: 1fr; }
+}
+
+.skeleton-grid .stat-skeleton {
+  height: 160px;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.5s infinite;
+  border-radius: $radius-lg;
+}
+
+.stat-card {
+  @include glass-panel;
+  @include shine-effect;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  transition: transform $transition-base, box-shadow $transition-base;
+  animation: fadeInUp 0.5s ease-out both;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.2s; }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  }
+
+  .stat-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    .stat-icon { font-size: 1.3rem; }
+    .stat-label {
+      font-size: $font-size-xs;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
+    }
+  }
+
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    color: $text-primary;
+    small {
+      font-size: 1rem;
+      font-weight: 500;
+      color: $text-muted;
+      margin-left: 4px;
+    }
+  }
+
+  .stat-sub, .streak-sub {
+    font-size: $font-size-xs;
+    color: $text-muted;
+  }
+
+  // XP card
+  &.xp-card {
+    border-color: rgba($accent-blue, 0.15);
+    .stat-value { @include text-gradient($accent-blue, $accent-purple); }
+
+    .level-badge {
+      display: inline-block;
+      background: rgba($accent-purple, 0.1);
+      border: 1px solid rgba($accent-purple, 0.2);
+      color: $accent-purple;
+      font-size: $font-size-xs;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: $radius-full;
+      width: fit-content;
+    }
+
+    .xp-bar-wrap {
+      margin-top: auto;
+      .xp-bar-track {
+        height: 6px;
+        background: rgba(255,255,255,0.07);
+        border-radius: $radius-full;
+        overflow: hidden;
+        .xp-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $accent-purple, $accent-blue);
+          border-radius: $radius-full;
+          animation: progressGrow 1s ease-out;
+          transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+      }
+      .xp-bar-label {
+        font-size: $font-size-xs;
+        color: $text-muted;
+        margin-top: 4px;
+        display: block;
+      }
+    }
+  }
+
+  // Streak card
+  &.streak-card {
+    border-color: rgba($accent-orange, 0.15);
+    .stat-value { @include text-gradient($accent-orange, $accent-yellow); }
+  }
+
+  // Total card
+  &.total-card {
+    border-color: rgba($accent-teal, 0.15);
+    .stat-value { @include text-gradient($accent-teal, $accent-green); }
+  }
+
+  // Mastered card
+  &.mastered-card {
+    border-color: rgba($accent-green, 0.15);
+    .stat-value { @include text-gradient($accent-green, $accent-teal); }
+
+    .mastery-bar-wrap {
+      margin-top: auto;
+      .mastery-bar-track {
+        height: 6px;
+        background: rgba(255,255,255,0.07);
+        border-radius: $radius-full;
+        overflow: hidden;
+        .mastery-bar-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $accent-green, $accent-teal);
+          border-radius: $radius-full;
+          animation: progressGrow 1.2s ease-out;
+          transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+      }
+      .mastery-pct {
+        font-size: $font-size-xs;
+        color: $text-muted;
+        margin-top: 4px;
+        display: block;
+      }
+    }
+  }
+}
+
+// ─── Section Titles ──────────────────────────────────────────────────
+.section-title {
+  margin-bottom: $spacing-md;
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $text-primary;
+  }
+  p {
+    font-size: $font-size-xs;
+    color: $text-muted;
+    margin-top: 2px;
+  }
+}
+
+// ─── SRS Breakdown ───────────────────────────────────────────────────
+.srs-breakdown {
+  @include glass-panel;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-2xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  animation: fadeInUp 0.5s ease-out 0.3s both;
+}
+
+.srs-item {
+  display: grid;
+  grid-template-columns: 10px 120px 1fr;
+  align-items: center;
+  gap: $spacing-md;
+
+  .srs-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .srs-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-sm;
+    .srs-name {
+      font-size: $font-size-xs;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .srs-count {
+      font-size: $font-size-sm;
+      font-weight: 700;
+    }
+  }
+
+  .srs-bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: $radius-full;
+    overflow: hidden;
+
+    .srs-bar-fill {
+      height: 100%;
+      border-radius: $radius-full;
+      animation: progressGrow 1s ease-out;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      min-width: 2px;
+    }
+  }
+
+  &.new {
+    .srs-dot { background: $srs-new; }
+    .srs-name, .srs-count { color: $srs-new; }
+    .srs-bar-fill { background: $srs-new; }
+  }
+  &.learning {
+    .srs-dot { background: $srs-learning; }
+    .srs-name, .srs-count { color: $srs-learning; }
+    .srs-bar-fill { background: $srs-learning; }
+  }
+  &.young {
+    .srs-dot { background: $srs-young; }
+    .srs-name, .srs-count { color: $srs-young; }
+    .srs-bar-fill { background: $srs-young; }
+  }
+  &.mature {
+    .srs-dot { background: $srs-mature; }
+    .srs-name, .srs-count { color: $srs-mature; }
+    .srs-bar-fill { background: $srs-mature; }
+  }
+}
+
+// ─── Quick Actions ───────────────────────────────────────────────────
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+  animation: fadeInUp 0.5s ease-out 0.4s both;
+
+  @media (max-width: 800px) { grid-template-columns: 1fr; }
+}
+
+.action-card {
+  @include glass-panel;
+  @include shine-effect;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  text-decoration: none;
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+  cursor: pointer;
+  border: 1px solid $border-color;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    border-color: $border-color-hover;
+
+    .action-arrow { transform: translateX(4px); color: $text-primary; }
+  }
+
+  .action-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.study  { background: rgba($accent-orange, 0.12); }
+    &.decks  { background: rgba($accent-blue, 0.12); }
+    &.ai     { background: rgba($accent-purple, 0.12); }
+  }
+
+  .action-info {
+    flex: 1;
+    h3 {
+      font-size: $font-size-sm;
+      font-weight: 700;
+      color: $text-primary;
+      margin-bottom: 2px;
+    }
+    p {
+      font-size: $font-size-xs;
+      color: $text-muted;
+    }
+  }
+
+  .action-arrow {
+    color: $text-muted;
+    font-size: 1.1rem;
+    transition: transform $transition-fast, color $transition-fast;
+  }
+}

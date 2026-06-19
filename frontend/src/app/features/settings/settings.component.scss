@@ -5,113 +5,260 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-xl;
-  max-width: 800px;
+  max-width: 820px;
 }
 
+// ─── Settings Card ─────────────────────────────────────────────────
 .settings-card {
   @include glass-panel;
+  @include shine-effect;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
-  border-radius: $radius-lg;
-  
-  h2 {
-    font-size: 1.2rem;
+  animation: fadeInUp 0.4s ease-out both;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-md;
     margin-bottom: $spacing-lg;
-    color: $accent-blue;
+    padding-bottom: $spacing-lg;
     border-bottom: 1px solid $border-color;
-    padding-bottom: $spacing-sm;
+
+    .card-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $text-primary;
+      margin-bottom: 2px;
+    }
+    .card-desc {
+      font-size: $font-size-xs;
+      color: $text-muted;
+    }
   }
 }
 
+// ─── Algorithm Options ────────────────────────────────────────────
+.algo-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.algo-option {
+  border: 2px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  cursor: pointer;
+  transition: all $transition-base;
+  background: rgba(255,255,255,0.02);
+  position: relative;
+
+  &:hover {
+    border-color: rgba($accent-blue, 0.3);
+    background: rgba($accent-blue, 0.03);
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    border-color: rgba($accent-blue, 0.5);
+    background: rgba($accent-blue, 0.07);
+    box-shadow: 0 0 0 1px rgba($accent-blue, 0.15);
+  }
+
+  .algo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-sm;
+
+    .algo-icon { font-size: 1.5rem; }
+
+    .algo-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid $border-color;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: transparent;
+      transition: all $transition-fast;
+
+      &.active {
+        background: $accent-blue;
+        border-color: $accent-blue;
+        color: white;
+      }
+    }
+  }
+
+  h3 {
+    font-size: $font-size-sm;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: $font-size-xs;
+    color: $text-muted;
+    line-height: 1.6;
+    margin-bottom: $spacing-sm;
+  }
+
+  .algo-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $accent-green;
+    background: rgba($accent-green, 0.1);
+    border: 1px solid rgba($accent-green, 0.2);
+    border-radius: $radius-full;
+    padding: 2px 8px;
+  }
+}
+
+// ─── Setting Item ─────────────────────────────────────────────────
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: $spacing-md 0;
-  
+
   &:not(:last-child) {
-    border-bottom: 1px dashed rgba($border-color, 0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  
+
   .setting-info {
     flex: 1;
     padding-right: $spacing-xl;
-    
+    min-width: 0;
+
     label {
       font-weight: 600;
       color: $text-primary;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      font-size: $font-size-sm;
     }
-    
     p {
-      color: $text-secondary;
-      font-size: 0.9rem;
+      color: $text-muted;
+      font-size: $font-size-xs;
+      line-height: 1.5;
     }
   }
-  
-  .form-control {
-    min-width: 150px;
+}
+
+// ─── Number Input ─────────────────────────────────────────────────
+.number-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  padding: 2px;
+  flex-shrink: 0;
+
+  .num-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(255,255,255,0.06);
+    color: $text-primary;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: $font-primary;
+    transition: all $transition-fast;
+    @include flex-center;
+
+    &:hover {
+      background: rgba(255,255,255,0.12);
+    }
   }
-  
-  .short-input {
-    width: 80px;
-    min-width: auto;
+
+  .num-input {
+    width: 50px;
     text-align: center;
+    background: transparent;
+    border: none;
+    color: $text-primary;
+    font-size: $font-size-sm;
+    font-weight: 700;
+    padding: $spacing-xs 0;
+
+    &:focus { box-shadow: none; }
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { display: none; }
   }
 }
 
-/* Toggle Switch */
-.switch {
+// ─── Toggle Switch ────────────────────────────────────────────────
+.toggle-switch {
   position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-  
-  input { 
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-}
-
-.slider {
-  position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: $bg-tertiary;
-  transition: .4s;
-  
-  &:before {
+  flex-shrink: 0;
+
+  input { display: none; }
+
+  .toggle-track {
+    display: block;
+    width: 48px;
+    height: 26px;
+    border-radius: 13px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: all $transition-base;
+    position: relative;
+  }
+
+  .toggle-thumb {
     position: absolute;
-    content: "";
-    height: 18px;
+    top: 3px;
+    left: 3px;
     width: 18px;
-    left: 4px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-  }
-}
-
-input:checked + .slider {
-  background-color: $accent-blue;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px $accent-blue;
-}
-
-input:checked + .slider:before {
-  transform: translateX(24px);
-}
-
-.slider.round {
-  border-radius: 34px;
-  
-  &:before {
+    height: 18px;
+    background: white;
     border-radius: 50%;
+    transition: transform $transition-base, background $transition-base;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
   }
+
+  input:checked + .toggle-track {
+    background: $accent-blue;
+    border-color: rgba($accent-blue, 0.5);
+
+    .toggle-thumb { transform: translateX(22px); }
+  }
+}
+
+// ─── Save Toast ───────────────────────────────────────────────────
+.save-toast {
+  background: rgba($accent-green, 0.1);
+  border: 1px solid rgba($accent-green, 0.2);
+  color: $accent-green;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeInUp 0.3s ease-out;
 }

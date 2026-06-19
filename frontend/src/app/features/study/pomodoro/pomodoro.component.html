@@ -1,27 +1,29 @@
-<div class="pomodoro-container" [class.active]="isRunning" [class.break]="isBreak">
-  <div class="timer-display">
-    <h2>{{ formatTime(timeLeft) }}</h2>
-    <span class="status-badge">{{ isBreak ? 'Break Time' : 'Focus Time' }}</span>
-  </div>
-  
-  <div class="controls">
-    <button class="btn-icon" (click)="toggleTimer()">
-      <span *ngIf="!isRunning">▶️</span>
-      <span *ngIf="isRunning">⏸️</span>
-    </button>
-    <button class="btn-icon reset" (click)="resetTimer()">🔄</button>
-  </div>
-  
-  <!-- Progress ring background -->
-  <svg class="progress-ring" width="120" height="120">
-    <circle
-      class="progress-ring__circle"
-      stroke="white"
-      stroke-width="4"
+<div class="pomodoro-container" [class.active]="isRunning && !isBreak" [class.break-mode]="isBreak">
+
+  <!-- SVG Ring -->
+  <svg class="progress-ring" width="110" height="110">
+    <circle class="ring-track" stroke-width="3" fill="transparent" r="52" cx="55" cy="55"/>
+    <circle class="ring-fill"
+      stroke-width="3"
       fill="transparent"
-      r="52"
-      cx="60"
-      cy="60"
+      r="52" cx="55" cy="55"
+      [style.strokeDasharray]="circumference"
       [style.strokeDashoffset]="strokeDashoffset"/>
   </svg>
+
+  <!-- Inner content -->
+  <div class="pomodoro-inner">
+    <div class="pomo-count" *ngIf="pomodoroCount > 0">{{ pomodoroCount }}🍅</div>
+    <div class="timer-time">{{ formatTime(timeLeft) }}</div>
+    <div class="timer-mode">{{ isBreak ? 'Break' : 'Focus' }}</div>
+  </div>
+
+  <!-- Controls -->
+  <div class="pomo-controls">
+    <button class="pomo-btn" (click)="toggleTimer()" [title]="isRunning ? 'Pause' : 'Start'">
+      {{ isRunning ? '⏸' : '▶' }}
+    </button>
+    <button class="pomo-btn reset-btn" (click)="resetTimer()" title="Reset">⟳</button>
+  </div>
+
 </div>

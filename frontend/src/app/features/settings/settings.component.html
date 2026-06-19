@@ -1,75 +1,137 @@
-<div class="page-header">
-  <div class="header-content">
-    <h1>Settings ⚙️</h1>
-    <p>Configure your learning experience.</p>
+<div class="page-header flex-header">
+  <div>
+    <h1>⚙️ Settings</h1>
+    <p>Tuỳ chỉnh trải nghiệm học tập của bạn</p>
   </div>
+  <button class="btn btn-primary" (click)="saveSettings()" [disabled]="isSaving">
+    <span *ngIf="!isSaving">💾 Lưu thay đổi</span>
+    <span *ngIf="isSaving">Đang lưu...</span>
+  </button>
 </div>
 
 <div class="settings-container">
-  <div class="settings-card">
-    <h2>Language Preferences</h2>
-    <div class="setting-item">
-      <div class="setting-info">
-        <label>Interface Language</label>
-        <p>Choose the language for the app interface.</p>
+
+  <!-- SRS Algorithm -->
+  <div class="settings-card" id="srs-settings">
+    <div class="card-header">
+      <span class="card-icon">🧠</span>
+      <div>
+        <h2>Thuật toán SRS</h2>
+        <p class="card-desc">Chọn phương pháp ghi nhớ tối ưu nhất cho bạn</p>
       </div>
-      <select class="form-control" [(ngModel)]="currentLang">
-        <option value="en">English</option>
-        <option value="vi">Tiếng Việt</option>
-      </select>
+    </div>
+
+    <div class="algo-options">
+      <div class="algo-option" [class.selected]="srsAlgorithm === 'sm2'"
+           (click)="srsAlgorithm = 'sm2'">
+        <div class="algo-header">
+          <span class="algo-icon">📈</span>
+          <div class="algo-check" [class.active]="srsAlgorithm === 'sm2'">✓</div>
+        </div>
+        <h3>SuperMemo-2 (SM-2)</h3>
+        <p>Thuật toán nghiên cứu khoa học. Thích ứng theo từng thẻ dựa trên chất lượng nhớ (Again/Hard/Good/Easy).</p>
+        <div class="algo-badge">Được khuyến nghị</div>
+      </div>
+
+      <div class="algo-option" [class.selected]="srsAlgorithm === 'leitner'"
+           (click)="srsAlgorithm = 'leitner'">
+        <div class="algo-header">
+          <span class="algo-icon">📦</span>
+          <div class="algo-check" [class.active]="srsAlgorithm === 'leitner'">✓</div>
+        </div>
+        <h3>Leitner Box System</h3>
+        <p>Hệ thống hộp đơn giản. Thẻ đúng tiến lên hộp cao hơn (ôn ít hơn), sai về hộp 1.</p>
+      </div>
     </div>
   </div>
 
-  <div class="settings-card">
-    <h2>Study Preferences</h2>
-    <div class="setting-item">
-      <div class="setting-info">
-        <label>Daily Goal</label>
-        <p>Number of new cards to learn per day.</p>
+  <!-- Study Preferences -->
+  <div class="settings-card" id="study-settings">
+    <div class="card-header">
+      <span class="card-icon">📚</span>
+      <div>
+        <h2>Tuỳ chỉnh học tập</h2>
+        <p class="card-desc">Cấu hình mục tiêu và phương pháp học</p>
       </div>
-      <input type="number" class="form-control short-input" [(ngModel)]="dailyGoal">
     </div>
-    
+
     <div class="setting-item">
       <div class="setting-info">
-        <label>Enable Feynman Technique Fields</label>
-        <p>Show a text area to explain concepts in your own words.</p>
+        <label>🎯 Mục tiêu hàng ngày</label>
+        <p>Số thẻ mới sẽ học mỗi ngày</p>
       </div>
-      <label class="switch">
+      <div class="number-input-wrap">
+        <button class="num-btn" (click)="dailyGoal = dailyGoal > 5 ? dailyGoal - 5 : 5">−</button>
+        <input type="number" class="num-input" [(ngModel)]="dailyGoal" min="1" max="200">
+        <button class="num-btn" (click)="dailyGoal = dailyGoal + 5">+</button>
+      </div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>🧠 Feynman Technique</label>
+        <p>Hiện ô nhập để bạn giải thích từ theo cách hiểu riêng — một trong những cách học hiệu quả nhất</p>
+      </div>
+      <label class="toggle-switch">
         <input type="checkbox" [(ngModel)]="feynmanEnabled">
-        <span class="slider round"></span>
+        <span class="toggle-track">
+          <span class="toggle-thumb"></span>
+        </span>
       </label>
     </div>
 
     <div class="setting-item">
       <div class="setting-info">
-        <label>SRS Algorithm</label>
-        <p>Choose between SuperMemo-2 (SM-2) or Leitner Box System.</p>
+        <label>🔀 Active Recall Mode</label>
+        <p>Ẩn nghĩa trên mặt trước thẻ, buộc não phải tự nhớ trước khi lật</p>
       </div>
-      <select class="form-control" [(ngModel)]="srsAlgorithm">
-        <option value="sm2">SuperMemo-2 (SM-2)</option>
-        <option value="leitner">Leitner Box System</option>
-      </select>
+      <label class="toggle-switch">
+        <input type="checkbox" [(ngModel)]="activeRecallEnabled">
+        <span class="toggle-track">
+          <span class="toggle-thumb"></span>
+        </span>
+      </label>
     </div>
   </div>
 
-  <div class="settings-card">
-    <h2>Pomodoro Timer</h2>
-    <div class="setting-item">
-      <div class="setting-info">
-        <label>Focus Duration</label>
-        <p>Minutes per focus session.</p>
+  <!-- Pomodoro Timer -->
+  <div class="settings-card" id="pomodoro-settings">
+    <div class="card-header">
+      <span class="card-icon">⏱️</span>
+      <div>
+        <h2>Pomodoro Timer</h2>
+        <p class="card-desc">Tuỳ chỉnh khoảng thời gian tập trung & nghỉ ngơi</p>
       </div>
-      <input type="number" class="form-control short-input" [(ngModel)]="pomodoroFocus">
     </div>
+
     <div class="setting-item">
       <div class="setting-info">
-        <label>Break Duration</label>
-        <p>Minutes per short break.</p>
+        <label>🎯 Thời gian tập trung</label>
+        <p>Phút mỗi phiên học</p>
       </div>
-      <input type="number" class="form-control short-input" [(ngModel)]="pomodoroBreak">
+      <div class="number-input-wrap">
+        <button class="num-btn" (click)="pomodoroFocus = pomodoroFocus > 5 ? pomodoroFocus - 5 : 5">−</button>
+        <input type="number" class="num-input" [(ngModel)]="pomodoroFocus" min="5" max="90">
+        <button class="num-btn" (click)="pomodoroFocus = pomodoroFocus + 5">+</button>
+      </div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <label>☕ Thời gian nghỉ</label>
+        <p>Phút mỗi lần nghỉ ngắn</p>
+      </div>
+      <div class="number-input-wrap">
+        <button class="num-btn" (click)="pomodoroBreak = pomodoroBreak > 1 ? pomodoroBreak - 1 : 1">−</button>
+        <input type="number" class="num-input" [(ngModel)]="pomodoroBreak" min="1" max="30">
+        <button class="num-btn" (click)="pomodoroBreak = pomodoroBreak + 1">+</button>
+      </div>
     </div>
   </div>
-  
-  <button class="btn btn-primary" (click)="saveSettings()">Save Settings</button>
+
+  <!-- Save success toast -->
+  <div class="save-toast" *ngIf="saveSuccess" [@fadeIn]>
+    ✅ Cài đặt đã được lưu thành công!
+  </div>
+
 </div>
