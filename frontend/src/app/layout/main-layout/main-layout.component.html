@@ -11,7 +11,7 @@
           <span class="user-name">{{ userEmail }}</span>
           <span class="user-role">Learner</span>
         </div>
-        <div class="user-avatar">{{ userEmail[0]?.toUpperCase() }}</div>
+        <div class="user-avatar">{{ userEmail && userEmail.length > 0 ? userEmail[0].toUpperCase() : 'U' }}</div>
         <button class="logout-btn" (click)="logout()">Đăng xuất</button>
       </div>
     </header>

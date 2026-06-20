@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
-import { Deck } from '../../core/models';
+import { Deck, Word } from '../../core/models';
 
 @Component({
   selector: 'app-decks',
@@ -15,6 +15,12 @@ export class DecksComponent implements OnInit {
   private apiService = inject(ApiService);
   decks: Deck[] = [];
   isLoading = true;
+
+  // Word list modal state
+  showWordListModal = false;
+  selectedDeckWords: Word[] = [];
+  selectedDeckName = '';
+  isLoadingWords = false;
 
   // Cycle through icons for visual variety
   private deckIcons = ['📘', '📗', '📙', '📕', '📒', '📓', '📔', '🗂️'];
@@ -73,5 +79,44 @@ export class DecksComponent implements OnInit {
         error: (err: any) => console.error('Failed to delete deck:', err)
       });
     }
+  }
+
+  openWordList(deck: Deck, event: Event) {
+    event.stopPropagation();
+    this.selectedDeckName = deck.name;
+    this.selectedDeckWords = [];
+    this.showWordListModal = true;
+    this.isLoadingWords = true;
+
+    this.apiService.getWords(deck.id).subscribe({
+      next: (words: Word[]) => {
+        this.selectedDeckWords = words;
+        this.isLoadingWords = false;
+      },
+      error: (err: any) => {
+        console.error('Failed to load words for deck:', err);
+        this.isLoadingWords = false;
+      }
+    });
+  }
+
+  closeWordList() {
+    this.showWordListModal = false;
+    this.selectedDeckWords = [];
+    this.selectedDeckName = '';
+  }
+
+  copyToClipboard(word: Word, event: Event) {
+    event.stopPropagation();
+    const textToCopy = `${word.term} ${word.ipa || ''} • ${word.definition_vi}`;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      // Temporary check indicator or alert
+      const target = event.target as HTMLElement;
+      const originalText = target.innerText;
+      target.innerText = '✅';
+      setTimeout(() => {
+        target.innerText = originalText;
+      }, 1500);
+    });
   }
 }

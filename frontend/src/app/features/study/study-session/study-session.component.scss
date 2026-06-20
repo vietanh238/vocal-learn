@@ -482,3 +482,337 @@
     justify-content: center;
   }
 }
+
+// ─── Study Mode Toggle ────────────────────────────────────────────────
+.study-mode-toggle {
+  display: flex;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: $radius-full;
+  padding: 2px;
+  flex-shrink: 0;
+
+  .toggle-mode-btn {
+    background: transparent;
+    border: none;
+    color: $text-muted;
+    padding: 5px 14px;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: $font-primary;
+    transition: all $transition-fast;
+
+    &:hover {
+      color: $text-primary;
+    }
+
+    &.active {
+      background: linear-gradient(135deg, $accent-blue, rgba($accent-blue, 0.65));
+      color: $text-inverse;
+      box-shadow: 0 4px 10px rgba($accent-blue, 0.25);
+    }
+  }
+}
+
+// ─── Spelling Area Layout ─────────────────────────────────────────────
+.spelling-area {
+  @include glass-panel;
+  background: linear-gradient(145deg, rgba(30, 32, 51, 0.95), rgba(22, 24, 44, 0.98));
+  border-radius: $radius-xl;
+  width: 100%;
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+  animation: fadeIn 0.4s ease-out;
+  border: 1px solid rgba($accent-blue, 0.15);
+
+  .spelling-card-header {
+    text-align: center;
+    h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: $text-primary;
+      margin-bottom: 6px;
+    }
+
+    .word-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: $font-size-xs;
+      color: $text-muted;
+
+      .word-ipa {
+        color: $accent-blue;
+        font-family: $font-mono;
+      }
+      .word-pos {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 1px 8px;
+        border-radius: $radius-full;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .spelling-audio-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .audio-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba($accent-blue, 0.1);
+      border: 2px solid rgba($accent-blue, 0.25);
+      color: $accent-blue;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all $transition-fast;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+      &:hover {
+        background: rgba($accent-blue, 0.2);
+        transform: scale(1.08);
+        box-shadow: 0 0 20px rgba($accent-blue, 0.3);
+      }
+
+      .audio-icon {
+        font-size: 1.45rem;
+      }
+    }
+
+    .word-translation {
+      font-size: $font-size-sm;
+      color: $text-secondary;
+      text-align: center;
+      margin-top: 4px;
+
+      strong {
+        color: $accent-blue;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  // Letter grid boxes
+  .spelling-boxes-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin: $spacing-xs 0;
+    max-width: 100%;
+
+    .spelling-box {
+      width: 44px;
+      height: 48px;
+      border-radius: $radius-sm;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-family: $font-mono;
+      color: $text-primary;
+      transition: all $transition-fast;
+      user-select: none;
+
+      &.correct {
+        border-color: $accent-green;
+        background: rgba($accent-green, 0.08);
+        color: $accent-green;
+        box-shadow: 0 0 12px rgba($accent-green, 0.15);
+      }
+
+      &.wrong {
+        border-color: $accent-red;
+        background: rgba($accent-red, 0.08);
+        color: $accent-red;
+        box-shadow: 0 0 12px rgba($accent-red, 0.15);
+      }
+
+      &.empty {
+        border-color: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.02);
+      }
+    }
+
+    .spelling-box-special {
+      width: 24px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $text-muted;
+    }
+
+    .hint-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.35rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 6px;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: scale(1.1);
+      }
+
+      &.hint-active {
+        animation: hintFloat 2s ease-in-out infinite alternate;
+      }
+    }
+  }
+
+  // Answer Input wrapper/groups
+  .spelling-input-wrapper {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .spelling-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .spelling-input-field {
+      width: 100%;
+      padding: $spacing-sm 2.5rem $spacing-sm $spacing-md;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: $radius-md;
+      color: $text-primary;
+      font-size: 0.95rem;
+      font-family: $font-primary;
+      text-align: center;
+      transition: all $transition-fast;
+
+      &:focus {
+        border-color: rgba($accent-blue, 0.5);
+        box-shadow: 0 0 0 3px rgba($accent-blue, 0.08);
+      }
+
+      &.input-correct {
+        border-color: $accent-green;
+        box-shadow: 0 0 14px rgba($accent-green, 0.15);
+      }
+
+      &.input-wrong {
+        border-color: $accent-red;
+        box-shadow: 0 0 14px rgba($accent-red, 0.15);
+      }
+    }
+
+    .spelling-clear-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: $text-muted;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: $text-primary;
+      }
+    }
+  }
+
+  // Letter tiles
+  .spelling-tiles-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    max-width: 440px;
+    margin-top: $spacing-xs;
+
+    .letter-tile-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: $text-primary;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: $spacing-xs $spacing-md;
+      border-radius: $radius-sm;
+      cursor: pointer;
+      font-family: $font-primary;
+      transition: all $transition-fast;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+      &:hover {
+        background: rgba($accent-blue, 0.12);
+        border-color: rgba($accent-blue, 0.25);
+        color: $accent-blue;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .spelling-actions-row {
+    margin-top: $spacing-sm;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .skip-btn {
+      padding: $spacing-sm $spacing-lg;
+      font-size: $font-size-xs;
+      font-weight: 700;
+      color: $text-muted;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: transparent;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: $text-secondary;
+      }
+    }
+  }
+}
+
+@keyframes hintFloat {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-3px) scale(1.05); text-shadow: 0 0 10px rgba($accent-yellow, 0.6); }
+}
+

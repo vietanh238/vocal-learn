@@ -54,6 +54,9 @@
       <button class="btn-action study" [routerLink]="['/study', 'deck-' + deck.id]">
         🎯 Study
       </button>
+      <button class="btn-action view-words" (click)="openWordList(deck, $event)">
+        👁️ View
+      </button>
       <button class="btn-action ai" [routerLink]="['/ai-cards']">
         🤖 Add
       </button>
@@ -67,5 +70,54 @@
   <div class="deck-card add-card" (click)="createDeck()">
     <div class="add-icon">+</div>
     <p>Tạo Deck mới</p>
+  </div>
+</div>
+
+<!-- Word List Modal Overlay -->
+<div class="word-list-backdrop" *ngIf="showWordListModal" (click)="closeWordList()">
+  <div class="word-list-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-title">
+        <span class="grad-icon">🎓</span>
+        <h2>{{ selectedDeckName }}</h2>
+      </div>
+      <button class="close-modal-btn" (click)="closeWordList()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Loading state -->
+      <div class="modal-loading animate-pulse" *ngIf="isLoadingWords">
+        <div class="modal-spinner"></div>
+        <p>Đang tải danh sách từ vựng...</p>
+      </div>
+
+      <!-- Empty state -->
+      <div class="modal-empty" *ngIf="!isLoadingWords && selectedDeckWords.length === 0">
+        <span class="empty-emoji">📭</span>
+        <p>Chưa có từ vựng nào trong bộ thẻ này.</p>
+      </div>
+
+      <!-- Word list view -->
+      <div class="words-table-container" *ngIf="!isLoadingWords && selectedDeckWords.length > 0">
+        <div class="words-count-stripe">
+          Từ vựng ({{ selectedDeckWords.length }} từ)
+        </div>
+        
+        <div class="word-row-list">
+          <div class="word-row-item" *ngFor="let word of selectedDeckWords; let idx = index">
+            <div class="word-row-left">
+              <span class="word-number">{{ idx + 1 }}.</span>
+              <strong class="word-term">{{ word.term }}</strong>
+              <span class="word-ipa" *ngIf="word.ipa">{{ word.ipa }}</span>
+              <span class="word-dot-sep" *ngIf="word.ipa || word.definition_vi">•</span>
+              <span class="word-meaning">{{ word.definition_vi }}</span>
+            </div>
+            <button class="word-share-btn" title="Sao chép từ vựng" (click)="copyToClipboard(word, $event)">
+              🔗
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

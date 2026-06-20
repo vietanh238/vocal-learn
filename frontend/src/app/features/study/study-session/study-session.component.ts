@@ -22,6 +22,14 @@ export class StudySessionComponent implements OnInit {
   isLoading = true;
   isSubmitting = false;
 
+  // Study Mode: 'flashcard' | 'spelling'
+  studyMode: 'flashcard' | 'spelling' = 'flashcard';
+
+  // Spelling Mode variables
+  spellingAnswer = '';
+  shuffledLetters: string[] = [];
+  shownHintsCount = 0;
+
   // Feynman
   feynmanEnabled = true;
   srsAlgorithm = 'sm2';
@@ -60,6 +68,7 @@ export class StudySessionComponent implements OnInit {
         this.currentIndex = 0;
         this.isLoading = false;
         this.updateStats();
+        this.onCardActive();
       },
       error: () => { this.isLoading = false; }
     });
@@ -91,6 +100,113 @@ export class StudySessionComponent implements OnInit {
   get accuracyPercent(): number {
     if (this.sessionTotal === 0) return 0;
     return Math.round((this.sessionCorrect / this.sessionTotal) * 100);
+  }
+
+  onCardActive() {
+    const card = this.currentCard;
+    if (!card) return;
+
+    this.setupSpellingExercise();
+
+    if (this.studyMode === 'spelling') {
+      setTimeout(() => this.speakWord(card.word_term), 100);
+    }
+  }
+
+  setStudyMode(mode: 'flashcard' | 'spelling') {
+    this.studyMode = mode;
+    if (mode === 'spelling' && this.currentCard) {
+      this.speakWord(this.currentCard.word_term);
+    }
+  }
+
+  // Text-To-Speech (TTS) Pronunciation
+  speakWord(term: string) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(term);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn('Speech synthesis not supported in this browser');
+    }
+  }
+
+  // Spelling exercise setup
+  setupSpellingExercise() {
+    const card = this.currentCard;
+    if (!card) return;
+
+    const term = card.word_term.trim();
+    this.spellingAnswer = '';
+    this.shownHintsCount = 0;
+
+    // Filter alphabet letters to build shuffled letter tiles
+    const letters = term.replace(/[^a-zA-Z]/g, '').toUpperCase().split('');
+    // Fisher-Yates shuffle
+    for (let i = letters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    this.shuffledLetters = letters;
+  }
+
+  handleLetterClick(letter: string) {
+    const term = this.currentCard?.word_term || '';
+    if (this.spellingAnswer.length < term.length) {
+      this.spellingAnswer += letter.toLowerCase();
+      this.onSpellingInputChange();
+    }
+  }
+
+  onSpellingInputChange() {
+    // Keep letters, spaces and hyphens
+    this.spellingAnswer = this.spellingAnswer.replace(/[^a-zA-Z\s\-]/g, '');
+    this.checkSpellingCompletion();
+  }
+
+  getLetterState(index: number): 'correct' | 'wrong' | 'empty' | 'special' {
+    const term = (this.currentCard?.word_term || '').toLowerCase();
+    if (index >= term.length) return 'empty';
+
+    const targetChar = term[index];
+    if (targetChar === ' ' || targetChar === '-' || targetChar === '_') {
+      return 'special';
+    }
+
+    if (index >= this.spellingAnswer.length) {
+      return 'empty';
+    }
+
+    const typedChar = this.spellingAnswer[index].toLowerCase();
+    return typedChar === targetChar ? 'correct' : 'wrong';
+  }
+
+  revealHint() {
+    const term = (this.currentCard?.word_term || '').toLowerCase();
+    if (this.spellingAnswer.length < term.length) {
+      const nextCorrectChar = term[this.spellingAnswer.length];
+      if (nextCorrectChar) {
+        this.spellingAnswer += nextCorrectChar;
+        this.shownHintsCount++;
+        this.checkSpellingCompletion();
+      }
+    }
+  }
+
+  clearSpelling() {
+    this.spellingAnswer = '';
+  }
+
+  checkSpellingCompletion() {
+    const term = (this.currentCard?.word_term || '').trim().toLowerCase();
+    if (this.spellingAnswer.trim().toLowerCase() === term) {
+      // Auto-submit as Good (quality 5) after a delay
+      setTimeout(() => {
+        this.submitReview(5);
+      }, 700);
+    }
   }
 
   flipCard() {
@@ -155,6 +271,7 @@ export class StudySessionComponent implements OnInit {
     setTimeout(() => {
       this.currentIndex++;
       this.updateStats();
+      this.onCardActive();
     }, 180);
   }
 

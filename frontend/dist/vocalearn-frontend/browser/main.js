@@ -46,7 +46,7 @@ var routes = [
   },
   {
     path: "",
-    loadComponent: () => import("./chunk-TYAUN3FR.js").then((m) => m.MainLayoutComponent),
+    loadComponent: () => import("./chunk-7NF5QOWP.js").then((m) => m.MainLayoutComponent),
     canActivate: [authGuard],
     children: [
       {
@@ -55,7 +55,7 @@ var routes = [
       },
       {
         path: "decks",
-        loadComponent: () => import("./chunk-JDHC6CSW.js").then((m) => m.DecksComponent)
+        loadComponent: () => import("./chunk-MK74JKJA.js").then((m) => m.DecksComponent)
       },
       {
         path: "ai-cards",
@@ -67,7 +67,7 @@ var routes = [
       },
       {
         path: "study/:mode",
-        loadComponent: () => import("./chunk-HCD7CDS4.js").then((m) => m.StudySessionComponent)
+        loadComponent: () => import("./chunk-GEWUXSAD.js").then((m) => m.StudySessionComponent)
       },
       { path: "", redirectTo: "dashboard", pathMatch: "full" }
     ]
