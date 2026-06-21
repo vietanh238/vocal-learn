@@ -36,7 +36,7 @@ export interface Word {
   part_of_speech: string;
   definition_en: string;
   definition_vi: string;
-  example_sentences: string[];
+  example_sentences: any[];
   image?: string;
   audio_url?: string;
   collocations: string[];

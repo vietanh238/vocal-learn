@@ -24,6 +24,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/decks/decks.component').then(m => m.DecksComponent)
       },
       {
+        path: 'decks/:id',
+        loadComponent: () => import('./features/decks/deck-detail/deck-detail.component').then(m => m.DeckDetailComponent)
+      },
+      {
         path: 'ai-cards',
         loadComponent: () => import('./features/ai-generator/ai-generator.component').then(m => m.AiGeneratorComponent)
       },

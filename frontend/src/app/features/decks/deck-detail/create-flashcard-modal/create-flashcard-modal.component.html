@@ -1,0 +1,112 @@
+<div class="modal-backdrop" (click)="cancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Tạo Flashcard</h2>
+      <button class="close-btn" (click)="cancel()">✕</button>
+    </div>
+
+    <div class="modal-tabs">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'ai'" 
+        (click)="activeTab = 'ai'">
+        <span class="sparkle">✨</span> Thêm nhanh (AI)
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'manual'" 
+        (click)="activeTab = 'manual'">
+        ✍️ Nhập thủ công
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- AI Tab -->
+      <div class="tab-content ai-tab" *ngIf="activeTab === 'ai'">
+        <div class="ai-helpers">
+          <a href="https://chat.openai.com/" target="_blank" class="ai-btn chatgpt">
+            <img src="https://chatgpt.com/favicon.ico" alt="ChatGPT" width="16"> ChatGPT
+          </a>
+          <a href="https://gemini.google.com/" target="_blank" class="ai-btn gemini">
+            <img src="https://www.gstatic.com/lamda/images/favicon_v1_150160cdd67f9072e1ed.ico" alt="Gemini" width="16"> Gemini
+          </a>
+        </div>
+        <p class="ai-hint">Copy JSON từ AI và dán vào đây:</p>
+        <textarea 
+          class="form-control json-input" 
+          [(ngModel)]="aiJsonText" 
+          placeholder='[{"term":"apple","definition_vi":"quả táo"...}]'>
+        </textarea>
+      </div>
+
+      <!-- Manual Tab -->
+      <div class="tab-content manual-tab" *ngIf="activeTab === 'manual'">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Từ *</label>
+            <input type="text" class="form-control" [(ngModel)]="wordData.term" placeholder="VD: apple">
+          </div>
+          <div class="form-group flex-1">
+            <label>Dịch nghĩa *</label>
+            <input type="text" class="form-control" [(ngModel)]="wordData.definition_vi" placeholder="VD: quả táo">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Phát âm</label>
+            <input type="text" class="form-control" [(ngModel)]="wordData.ipa" placeholder="VD: /ˈæp.əl/">
+          </div>
+          <div class="form-group flex-1">
+            <label>Loại từ *</label>
+            <select class="form-control" [(ngModel)]="wordData.part_of_speech">
+              <option *ngFor="let pos of partsOfSpeech" [value]="pos.value">{{ pos.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Danh mục</label>
+            <input type="text" class="form-control" [(ngModel)]="wordData.category" disabled>
+          </div>
+          <div class="form-group flex-1">
+            <label>Biểu tượng</label>
+            <input type="text" class="form-control" [(ngModel)]="wordData.icon" placeholder="🍎">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Ví dụ</label>
+          <div class="example-input-container">
+            <div class="example-inputs">
+              <input type="text" class="form-control" [(ngModel)]="currentExampleEn" placeholder="Ví dụ tiếng Anh *">
+              <input type="text" class="form-control" [(ngModel)]="currentExampleVi" placeholder="Dịch sang tiếng Việt *">
+            </div>
+            <button class="btn btn-outline" (click)="addExample()">Thêm</button>
+          </div>
+        </div>
+
+        <div class="examples-list" *ngIf="examples.length > 0">
+          <div class="example-item" *ngFor="let ex of examples; let i = index">
+            <div class="ex-content">
+              <div class="ex-en">{{ ex.en }}</div>
+              <div class="ex-vi">{{ ex.vi }}</div>
+            </div>
+            <button class="icon-btn delete" (click)="removeExample(i)">🗑️</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="cancel()">Hủy</button>
+      <button class="btn btn-primary" [disabled]="isSaving" (click)="saveWord()">
+        {{ isSaving ? 'Đang lưu...' : 'Thêm từ' }}
+      </button>
+    </div>
+
+  </div>
+</div>
